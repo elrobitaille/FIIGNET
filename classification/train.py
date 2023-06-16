@@ -3,7 +3,7 @@ from fastai.vision.augment import FlipItem
 import os
 import argparse
 
-# python train.py --input_path '/home/ugrad/serius/edgarrobitaille/AquaFinity-main/classify/segmented' --output_path '/home/ugrad/serius/edgarrobitaille/fish-data/models/fish_classifier.pkl'
+# python train.py --input_path '/path/to/image/directory' --output_path '/path/to/learner.pkl'
 
 def main(args):
     path = args.input_path
