@@ -4,7 +4,7 @@
 import subprocess
 
 def main():
-    raw_data_path = "/Users/edgarrobitaille/Desktop/FIIGNET/image_data/unprocessed/fish"
+    raw_data_path = "/Users/edgarrobitaille/Desktop/FIIGNET/image_data/unprocessed/fish/white_spot/ich"
     raw_data_enhanced_path = "/Users/edgarrobitaille/Desktop/FIIGNET/image_data/processed/raw_image_enhanced"
     resized_data_path = "/Users/edgarrobitaille/Desktop/FIIGNET/image_data/unprocessed/resized"
     weights = "/Users/edgarrobitaille/Desktop/FIIGNET/preprocessing/yolo_tracking/runs/yolov8n_results6/weights/best.pt"
@@ -14,10 +14,10 @@ def main():
     width = "1980"
 
     commands = [
-        f"make enhance input_dir={raw_data_path} output_dir={raw_data_enhanced_path}"
+        f"make enhance input_dir={raw_data_path} output_dir={raw_data_enhanced_path}",
         f"make resize input_path={raw_data_enhanced_path} output_path={resized_data_path}",
-        f"make segment input_path={resized_data_path} weights={weights} height={height} width={width}",
-        f"make enhance input_dir={cropped_data_path} output_dir={cropped_data_enhanced_path}"
+       # f"make segment input_path={resized_data_path} weights={weights} height={height} width={width}",
+       # f"make enhance input_dir={cropped_data_path} output_dir={cropped_data_enhanced_path}"
     ]
 
     # Run each command in sequence

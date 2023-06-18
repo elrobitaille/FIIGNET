@@ -8,18 +8,26 @@ def is_image_file(filename):
     return ext in image_extensions
 
 def resize_image(image_path, output_dir, output_size=(1920, 1080)):
-    with Image.open(image_path) as img:
-        img_resized = img.resize(output_size)
+    try: 
+        with Image.open(image_path) as img:
+            img_resized = img.resize(output_size)
 
-        # Create output directory if it doesn't exist
-        os.makedirs(output_dir, exist_ok=True)
+            # Create output directory if it doesn't exist
+            os.makedirs(output_dir, exist_ok=True)
 
-        # Prepare the output path
-        filename = os.path.basename(image_path)
-        output_path = os.path.join(output_dir, filename)
+            # Prepare the output path
+            filename = os.path.basename(image_path)
+            output_path = os.path.join(output_dir, filename)
 
-        # Save the resized image
-        img_resized.save(output_path)
+            # Print out the current operation
+            print(f"Resizing image: {image_path}")
+            print(f"Saving resized image to path: {output_path}")
+
+            # Save the resized image
+            img_resized.save(output_path)
+    except Exception as e:
+         print(f"An error occurred while processing image at path: {image_path}. Error: {str(e)}")
+
 
 def resize_directory(directory_path, output_dir):
     # Iterate through each file in the directory and its subdirectories
