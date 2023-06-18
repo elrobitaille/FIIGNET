@@ -20,12 +20,14 @@ import re
 from pathlib import Path
 from val import Evaluator
 
-from boxmot.utils import ROOT, WEIGHTS
+FILE = Path(__file__).resolve()
+ROOT = FILE.parents[0].parents[0]  # examples absolute path
+EXAMPLES = FILE.parents[0]  # examples absolute path
+WEIGHTS = EXAMPLES / 'weights'
+
+from ultralytics_new.ultralytics.yolo.utils import LOGGER
+from ultralytics_new.ultralytics.yolo.utils.checks import check_requirements, print_args
 from track import run
-
-from boxmot.utils import logger
-from ultralytics.yolo.utils.checks import check_requirements, print_args
-
 
 
 class Objective(Evaluator):
@@ -76,7 +78,8 @@ class Objective(Evaluator):
             nn_budget = trial.suggest_categorical("nn_budget", [100])
             max_unmatched_preds = trial.suggest_categorical("max_unmatched_preds", [0])
 
-            d = {
+            d['strongsort'] = \
+                {
                     'ecc': ecc,
                     'mc_lambda': mc_lambda,
                     'ema_alpha': ema_alpha,
@@ -86,7 +89,7 @@ class Objective(Evaluator):
                     'max_age': max_age,
                     'n_init': n_init,
                     'nn_budget': nn_budget
-            }
+                }
                 
         elif self.opt.tracking_method == 'botsort':
             
@@ -100,7 +103,8 @@ class Objective(Evaluator):
             frame_rate = trial.suggest_categorical("frame_rate", [30])
             lambda_ = trial.suggest_float("lambda_", 0.97, 0.995)
 
-            d = {
+            d['botsort'] = \
+                {
                     'track_high_thresh': track_high_thresh,
                     'new_track_thresh': new_track_thresh,
                     'track_buffer': track_buffer,
@@ -110,7 +114,7 @@ class Objective(Evaluator):
                     'cmc_method': cmc_method,
                     'frame_rate': frame_rate,
                     'lambda_': lambda_
-            }
+                }
                 
         elif self.opt.tracking_method == 'bytetrack':
 
@@ -118,12 +122,13 @@ class Objective(Evaluator):
             track_buffer = trial.suggest_int("track_buffer", 10, 60, step=10)  
             match_thresh = trial.suggest_float("match_thresh", 0.7, 0.9)
             
-            d = {
+            d['bytetrack'] = \
+                {
                     'track_thresh': self.opt.conf,
                     'match_thresh': match_thresh,
                     'track_buffer': track_buffer,
                     'frame_rate': 30
-            }
+                }
                 
         elif self.opt.tracking_method == 'ocsort':
             
@@ -136,7 +141,8 @@ class Objective(Evaluator):
             inertia = trial.suggest_float("inertia", 0.1, 0.4)
             use_byte = trial.suggest_categorical("use_byte", [True, False])
             
-            d = {
+            d['ocsort'] = \
+                {
                     'det_thresh': det_thresh,
                     'max_age': max_age,
                     'min_hits': min_hits,
@@ -145,7 +151,7 @@ class Objective(Evaluator):
                     'asso_func': asso_func,
                     'inertia': inertia,
                     'use_byte': use_byte,
-            }
+                }
                 
         elif self.opt.tracking_method == 'deepocsort':
             
@@ -164,7 +170,8 @@ class Objective(Evaluator):
             aw_off = trial.suggest_categorical("aw_off", [True, False])
             new_kf_off = trial.suggest_categorical("new_kf_off", [True, False])
             
-            d = {
+            d['deepocsort'] = \
+                {
                     'det_thresh': det_thresh,
                     'max_age': max_age,
                     'min_hits': min_hits,
@@ -179,10 +186,9 @@ class Objective(Evaluator):
                     'cmc_off': cmc_off,
                     'aw_off': aw_off,
                     'new_kf_off': new_kf_off
-            }
+                }
                         
         # overwrite existing config for tracker
-        logger.info(f"Writing newly generated config for trial")
         with open(self.opt.tracking_config, 'w') as f:
             data = yaml.dump(d, f)   
     
@@ -217,10 +223,11 @@ def print_best_trial_metric_results(study, objectives):
     """
     for ob in enumerate(objectives):  
         trial_with_highest_ob = max(study.best_trials, key=lambda t: t.values[0])
-        logger.info(f"Trial with highest {ob}: ")
-        logger.info(f"\tnumber: {trial_with_highest_ob.number}")
-        logger.info(f"\tvalues: {trial_with_highest_ob.values}")
-        logger.info(f"\tparams: {trial_with_highest_ob.params}")
+        print(f"Trial with highest {ob}: ")
+        print(f"\tnumber: {trial_with_highest_ob.number}")
+        print(f"\tparams: {trial_with_highest_ob.params}")
+        print(f"\tvalues: {trial_with_highest_ob.values}")
+
     
     
 def save_plots(opt, study, objectives):
@@ -258,7 +265,7 @@ def write_best_HOTA_params_to_config(opt, study):
         None
     """
     trial_with_highest_HOTA = max(study.best_trials, key=lambda t: t.values[0])
-    d = trial_with_highest_HOTA.params
+    d = {opt.tracking_method: trial_with_highest_HOTA.params}
     with open(opt.tracking_config, 'w') as f:
         f.write(f'# Trial number:      {trial_with_highest_HOTA.number}\n')
         f.write(f'# HOTA, MOTA, IDF1:  {trial_with_highest_HOTA.values}\n')
@@ -272,7 +279,6 @@ def parse_opt():
     parser.add_argument('--tracking-method', type=str, default='deepocsort', help='strongsort, ocsort')
     parser.add_argument('--name', default='exp', help='save results to project/name')
     parser.add_argument('--project', default=ROOT / 'runs' / 'evolve', help='save results to project/name')
-    parser.add_argument('--classes', nargs='+', type=str, default=['0'], help='filter by class: --classes 0, or --classes 0 2 3')
     parser.add_argument('--exist-ok', action='store_true', help='existing project/name ok, do not increment')
     parser.add_argument('--benchmark', type=str,  default='MOT17', help='MOT16, MOT17, MOT20')
     parser.add_argument('--split', type=str,  default='train', help='existing project/name ok, do not increment')
@@ -335,7 +341,8 @@ if __name__ == "__main__":
         # first trial with params in yaml file, evolved for MOT17
         with open(opt.tracking_config, 'r') as f:
             params = yaml.load(f, Loader=yaml.loader.SafeLoader)
-            study.enqueue_trial(params)
+            study.enqueue_trial(params[opt.tracking_config.stem])
+            print(study.trials)
 
     continuous_study_save_cb = ContinuousStudySave(opt.tracking_method)
     study.optimize(Objective(opt), n_trials=opt.n_trials, callbacks=[continuous_study_save_cb])

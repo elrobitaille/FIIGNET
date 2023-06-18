@@ -27,12 +27,17 @@ from tqdm import tqdm
 import numpy as np
 from torch.utils.tensorboard import SummaryWriter
 
-from boxmot.utils import logger as LOGGER
-from ultralytics.yolo.utils.checks import check_requirements, print_args
-from ultralytics.yolo.utils.files import increment_path
+from ultralytics_new.ultralytics.yolo.utils import LOGGER
+from ultralytics_new.ultralytics.yolo.utils.checks import check_requirements, print_args
+from ultralytics_new.ultralytics.yolo.utils.files import increment_path
 
-from boxmot.utils import ROOT, WEIGHTS, EXAMPLES
 from track import run
+
+
+FILE = Path(__file__).resolve()
+ROOT = FILE.parents[0].parents[0]  # repo root absolute path
+EXAMPLES = FILE.parents[0]  # examples absolute path
+WEIGHTS = EXAMPLES / 'weights'
 
 
 class Evaluator:
@@ -91,7 +96,7 @@ class Evaluator:
                                 zip_file.extract(member, val_tools_path / 'data')
                 LOGGER.info(f'{benchmark}.zip unzipped successfully')
             except Exception as e:
-                LOGGER.error(f'{benchmark}.zip is corrupted. Try deleting the file and run the script again')
+                print(f'{benchmark}.zip is corrupted. Try deleting the file and run the script again')
                 sys.exit()
 
     def eval_setup(self, opt, val_tools_path):
@@ -191,40 +196,24 @@ class Evaluator:
                 if not dst_seq_path.is_dir():
                     src_seq_path = seq_path
                     shutil.move(str(src_seq_path), str(dst_seq_path))
-                
-                LOGGER.info(f"Staring evaluation process on {dst_seq_path}")
-                p = subprocess.Popen(
-                    args=[
-                        sys.executable, str(EXAMPLES / "track.py"),
-                        "--yolo-model", self.opt.yolo_model,
-                        "--reid-model", self.opt.reid_model,
-                        "--tracking-method", self.opt.tracking_method,
-                        "--conf", str(self.opt.conf),
-                        "--imgsz", str(self.opt.imgsz[0]),
-                        "--classes", *self.opt.classes,
-                        "--name", save_dir.name,
-                        "--save-txt",
-                        "--project", self.opt.project,
-                        "--device", str(tracking_subprocess_device),
-                        "--source", dst_seq_path,
-                        "--exist-ok",
-                        "--save",
-                    ],
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE,
-                    text=True
-                )
+
+                p = subprocess.Popen([
+                    sys.executable, str(EXAMPLES / "track.py"),
+                    "--yolo-model", self.opt.yolo_model,
+                    "--reid-model", self.opt.reid_model,
+                    "--tracking-method", self.opt.tracking_method,
+                    "--conf", str(self.opt.conf),
+                    "--imgsz", str(self.opt.imgsz[0]),
+                    "--classes", str(0),
+                    "--name", save_dir.name,
+                    "--save-txt",
+                    "--project", self.opt.project,
+                    "--device", str(tracking_subprocess_device),
+                    "--source", dst_seq_path,
+                    "--exist-ok",
+                    "--save",
+                ])
                 processes.append(p)
-                # Wait for the subprocess to complete and capture output
-                stdout, stderr = p.communicate()
-                
-                # Check the return code of the subprocess
-                if p.returncode != 0:
-                    LOGGER.error(stderr)
-                    LOGGER.error(stdout)
-                    sys.exit(1)
-                else:
-                    LOGGER.success(f"{dst_seq_path} evaluation succeeded")
 
             for p in processes:
                 p.wait()
@@ -233,7 +222,7 @@ class Evaluator:
 
         # run the evaluation on the generated txts
         d = [seq_path.parent.name for seq_path in seq_paths]
-        p = subprocess.Popen(
+        p = subprocess.run(
             args=[
                 sys.executable, val_tools_path / 'scripts' / 'run_mot_challenge.py',
                 "--GT_FOLDER", gt_folder,
@@ -246,26 +235,17 @@ class Evaluator:
                 "--TRACKER_SUB_FOLDER", "",
                 "--NUM_PARALLEL_CORES", "4",
                 "--SKIP_SPLIT_FOL", "True",
-                "--SEQ_INFO", *d
-            ],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            text=True
+                "--SEQ_INFO"
+                ] + d,
+            universal_newlines=True,
+            stdout=subprocess.PIPE
         )
-        # Wait for the subprocess to complete and capture output
-        stdout, stderr = p.communicate()
 
-        # Check the return code of the subprocess
-        if p.returncode != 0:
-            LOGGER.error(stderr)
-            LOGGER.error(stdout)
-            sys.exit(1)
-
-        LOGGER.info(stdout)
+        print(p.stdout)
 
         # save MOT results in txt 
         with open(save_dir / 'MOT_results.txt', 'w') as f:
-            f.write(stdout)
+            f.write(p.stdout)
         # copy tracking method config to exp folder
         tracking_config = \
             ROOT /\
@@ -275,7 +255,7 @@ class Evaluator:
             (opt.tracking_method + '.yaml')
         shutil.copyfile(tracking_config, save_dir / Path(tracking_config).name)
 
-        return stdout
+        return p.stdout
 
     def parse_mot_results(self, results):
         """Extract the COMBINED HOTA, MOTA, IDF1 from the results generate by the
@@ -332,7 +312,6 @@ def parse_opt():
     parser.add_argument('--reid-model', type=str, default=WEIGHTS / 'mobilenetv2_x1_4_dukemtmcreid.pt')
     parser.add_argument('--tracking-method', type=str, default='deepocsort', help='strongsort, ocsort')
     parser.add_argument('--name', default='exp', help='save results to project/name')
-    parser.add_argument('--classes', nargs='+', type=str, default=['0'], help='filter by class: --classes 0, or --classes 0 2 3')
     parser.add_argument('--project', default=EXAMPLES / 'runs' / 'val', help='save results to project/name')
     parser.add_argument('--exist-ok', action='store_true', help='existing project/name ok, do not increment')
     parser.add_argument('--benchmark', type=str, default='MOT17-mini', help='MOT16, MOT17, MOT20')

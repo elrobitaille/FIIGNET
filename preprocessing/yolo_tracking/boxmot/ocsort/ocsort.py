@@ -5,7 +5,7 @@ from __future__ import print_function
 
 import numpy as np
 from .association import *
-from boxmot.utils.ops import xywh2xyxy
+from ultralytics_new.ultralytics.yolo.utils.ops import xywh2xyxy
 
 
 def k_previous_obs(observations, cur_age, k):
@@ -179,7 +179,7 @@ ASSO_FUNCS = {  "iou": iou_batch,
 
 
 class OCSort(object):
-    def __init__(self, det_thresh=0.2, max_age=30, min_hits=3, 
+    def __init__(self, det_thresh, max_age=30, min_hits=3, 
         iou_threshold=0.3, delta_t=3, asso_func="iou", inertia=0.2, use_byte=False):
         """
         Sets key parameters for SORT
@@ -211,9 +211,9 @@ class OCSort(object):
         confs = dets[:, 4]
         clss = dets[:, 5]
         
-        classes = clss
-        xyxys = xyxys
-        confs = confs
+        classes = clss.numpy()
+        xyxys = xyxys.numpy()
+        confs = confs.numpy()
 
         output_results = np.column_stack((xyxys, confs, classes))
         

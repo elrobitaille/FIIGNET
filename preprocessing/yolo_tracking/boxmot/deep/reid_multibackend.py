@@ -12,15 +12,14 @@ import gdown
 from os.path import exists as file_exists
 
 
-from boxmot.utils.checks import TestRequirements
-tr = TestRequirements()
-from boxmot.utils import logger as LOGGER
-from boxmot.deep.reid_model_factory import (show_downloadeable_models, get_model_url, get_model_name,
+from ultralytics_new.ultralytics.yolo.utils.checks import check_requirements, check_version
+from ultralytics_new.ultralytics.yolo.utils import LOGGER
+from .reid_model_factory import (show_downloadeable_models, get_model_url, get_model_name,
                                                           download_url, load_pretrained_weights)
-from boxmot.deep.models import build_model
+from .models import build_model
 
 
-def check_suffix(file='osnet_x0_25_msmt17.pt', suffix=('.pt',), msg=''):
+def check_suffix(file='yolov5s.pt', suffix=('.pt',), msg=''):
     # Check file(s) for acceptable suffix
     if file and suffix:
         if isinstance(suffix, str):
@@ -28,10 +27,7 @@ def check_suffix(file='osnet_x0_25_msmt17.pt', suffix=('.pt',), msg=''):
         for f in file if isinstance(file, (list, tuple)) else [file]:
             s = Path(f).suffix.lower()  # file suffix
             if len(s):
-                try:
-                    assert s in suffix
-                except AssertionError as err:
-                    LOGGER.error(f"{err}{f} acceptable suffix is {suffix}")
+                assert s in suffix, f"{msg}{f} acceptable suffix is {suffix}"
 
 
 class ReIDDetectMultiBackend(nn.Module):
@@ -65,7 +61,7 @@ class ReIDDetectMultiBackend(nn.Module):
             elif file_exists(w):
                 pass
             else:
-                LOGGER.error(f'No URL associated to the chosen StrongSORT weights ({w}). Choose between:')
+                print(f'No URL associated to the chosen StrongSORT weights ({w}). Choose between:')
                 show_downloadeable_models()
                 exit()
 
@@ -80,7 +76,8 @@ class ReIDDetectMultiBackend(nn.Module):
         if self.pt:  # PyTorch
             # populate model arch with weights
             if w and w.is_file() and w.suffix == '.pt':
-                load_pretrained_weights(self.model, w) 
+                load_pretrained_weights(self.model, w)
+                
             self.model.to(device).eval()
             self.model.half() if self.fp16 else  self.model.float()
         elif self.jit:
@@ -90,14 +87,14 @@ class ReIDDetectMultiBackend(nn.Module):
         elif self.onnx:  # ONNX Runtime
             LOGGER.info(f'Loading {w} for ONNX Runtime inference...')
             cuda = torch.cuda.is_available() and device.type != 'cpu'
-            tr.check_packages(['onnx', 'onnxruntime-gpu' if cuda else 'onnxruntime'])
+            #check_requirements(('onnx', 'onnxruntime-gpu' if cuda else 'onnxruntime'))
             import onnxruntime
             providers = ['CUDAExecutionProvider', 'CPUExecutionProvider'] if cuda else ['CPUExecutionProvider']
             self.session = onnxruntime.InferenceSession(str(w), providers=providers)
         elif self.engine:  # TensorRT
             LOGGER.info(f'Loading {w} for TensorRT inference...')
-            tr.check_packages(('nvidia-tensorrt',))
             import tensorrt as trt  # https://developer.nvidia.com/nvidia-tensorrt-download
+            check_version(trt.__version__, '7.0.0', hard=True)  # require tensorrt>=7.0.0
             if device.type == 'cpu':
                 device = torch.device('cuda:0')
             Binding = namedtuple('Binding', ('name', 'dtype', 'shape', 'data', 'ptr'))
@@ -160,7 +157,7 @@ class ReIDDetectMultiBackend(nn.Module):
             # The function `get_tensor()` returns a copy of the tensor data.
             output_data = self.interpreter.get_tensor(self.output_details[0]['index'])
         else:
-            LOGGER.error('This model framework is not supported yet!')
+            print('This model framework is not supported yet!')
             exit()
         
         
@@ -220,7 +217,7 @@ class ReIDDetectMultiBackend(nn.Module):
             im_batch = im_batch.cpu().numpy()  # FP32
             features = self.executable_network([im_batch])[self.output_layer]
         else:
-            LOGGER.error('Framework not supported at the moment, leave an enhancement suggestion')
+            print('Framework not supported at the moment, we are working on it...')
             exit()
 
         if isinstance(features, (list, tuple)):

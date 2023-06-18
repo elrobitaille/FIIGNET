@@ -5,11 +5,7 @@ import torch
 import argparse
 import numpy as np
 import cv2
-import pathlib
 from types import SimpleNamespace
-from PIL import Image
-from fastai.learner import load_learner
-from fastai.vision.core import PILImage
 
 from boxmot.tracker_zoo import create_tracker
 from ultralytics.yolo.engine.model import YOLO, TASK_MAP
@@ -20,16 +16,10 @@ from ultralytics.yolo.utils.files import increment_path
 from ultralytics.yolo.engine.results import Boxes
 from ultralytics.yolo.data.utils import VID_FORMATS
 
-
 FILE = Path(__file__).resolve()
 ROOT = FILE.parents[0].parents[0]  # repo root absolute path
 EXAMPLES = FILE.parents[0]  # examples absolute path
 WEIGHTS = EXAMPLES / 'weights'
-
-# load the model
-path = Path('/home/ugrad/serius/edgarrobitaille/fish-data/models/')
-learn_inf = load_learner(path / 'fish_classifier.pkl')
-print("Model loaded successfully")
 
 
 def on_predict_start(predictor):
@@ -91,7 +81,7 @@ def run(args):
     predictor.setup_source(predictor.args.source)
     
     predictor.args.imgsz = (args['img_height'], args['img_width'])
-    predictor.save_dir = Path("/home/ugrad/serius/edgarrobitaille/AquaFinity-main/runs/track/exp")
+    predictor.save_dir = Path("/home/ugrad/serius/edgarrobitaille/FIIGNET/image_data/processed/yolo_output")
     # check image size
     #predictor.save_dir = increment_path(Path(predictor.args.project) / predictor.args.name, exist_ok=predictor.args.exist_ok)
     
@@ -105,74 +95,40 @@ def run(args):
     predictor.seen, predictor.windows, predictor.batch, predictor.profilers = 0, [], None, (ops.Profile(), ops.Profile(), ops.Profile(), ops.Profile())
     predictor.add_callback('on_predict_start', on_predict_start)
     
-    cropped_save_dir = Path("/home/ugrad/serius/edgarrobitaille/AquaFinity-main/classify/segmented/testing")
-
     predictor.run_callbacks('on_predict_start')
     for frame_idx, batch in enumerate(predictor.dataset):
-        predictor.run_callbacks('on_predict_batch_start')
-        predictor.batch = batch
-        path, im0s, vid_cap, s = batch
-        visualize = increment_path(save_dir / Path(path[0]).stem, exist_ok=True, mkdir=True) if predictor.args.visualize and (not predictor.dataset.source_type.tensor) else False
+        try: 
+            predictor.run_callbacks('on_predict_batch_start')
+            predictor.batch = batch
+            path, im0s, vid_cap, s = batch
+            visualize = increment_path(save_dir / Path(path[0]).stem, exist_ok=True, mkdir=True) if predictor.args.visualize and (not predictor.dataset.source_type.tensor) else False
 
-        # Preprocess
-        with predictor.profilers[0]:
-            im = predictor.preprocess(im0s)
+            # Preprocess
+            with predictor.profilers[0]:
+                im = predictor.preprocess(im0s)
 
-        # Inference
-        with predictor.profilers[1]:
-            preds = predictor.model(im, augment=predictor.args.augment, visualize=predictor.args.visualize)
+            # Inference
+            with predictor.profilers[1]:
+                preds = predictor.model(im, augment=predictor.args.augment, visualize=predictor.args.visualize)
 
-        # Postprocess
-        with predictor.profilers[2]:
-            predictor.results = predictor.postprocess(preds, im, im0s)
-        predictor.run_callbacks('on_predict_postprocess_end')
+            # Postprocess
+            with predictor.profilers[2]:
+                predictor.results = predictor.postprocess(preds, im, im0s)
+            predictor.run_callbacks('on_predict_postprocess_end')
+        
+        except Exception as e:
+            print(f"An error occurred while processing frame {frame_idx}: {str(e)}")
+            continue
         
         # Visualize, save, write results
         n = len(im0s)
         for i in range(n):
+            
             if predictor.dataset.source_type.tensor:  # skip write, show and plot operations if input is raw tensor
                 continue
             p, im0 = path[i], im0s[i].copy()
             p = Path(p)
-
-            if predictor.results[i].boxes:
-                for j, box in enumerate(predictor.results[i].boxes):
-                    x1, y1, x2, y2 = [int(x) for x in box.xyxy[0].tolist()]
-                    cropped = im0s[i][y1:y2, x1:x2]
-                    cropped_file_path = str(cropped_save_dir / f"frame_{frame_idx}_box_{j}.jpg")
-                    
-                    # Load the cropped image for classification
-                    img = PILImage.create(cropped)
-                    pred, pred_idx, probs = learn_inf.predict(img)
-                    label = f"Prediction: {pred}; Probability: {probs[pred_idx]:.2f}"
-                    print(f"Classifying image: {cropped_file_path}\n {label}")
-
-                    # Get the dimensions of the image
-                    height, width = im0.shape[:2]
-
-                    ref_height = 1000
-                    ref_width = 1000
-
-                    scale_factor = ((height * width) / (ref_height * ref_width)) ** 0.5
-                    font_scale = 0.9 * scale_factor
-
-                    # Define the text size
-                    text_size, _ = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, font_scale, 2)
-
-                    # Define the text position
-                    text_x = max(0, min(x1, width - text_size[0]))  # make sure text_x doesn't go off the right edge of the image
-                    text_y = max(0, y1 - 10)  # make sure text_y doesn't go off the top of the image
-
-                    # Draw the bounding box and label on the image
-                    color = (0, 0, 255)  
-                    cv2.rectangle(im0, (x1, y1), (x2, y2), color, 5)  
-                    cv2.putText(im0, label, (text_x, text_y), cv2.FONT_HERSHEY_SIMPLEX, font_scale, color, 3)
-
-                # Save the modified image after all detections have been processed
-                cv2.imwrite(str(cropped_save_dir / f"frame_{frame_idx}.jpg"), im0)
-
-
-
+            
             with predictor.profilers[3]:
                 # get raw bboxes tensor
                 dets = predictor.results[i].boxes.data
@@ -222,6 +178,17 @@ def run(args):
             if predictor.args.save and predictor.plotted_img is not None:
                 predictor.save_preds(vid_cap, i, str(predictor.save_dir / p.name))
 
+            # Save cropped images
+            if args['output_dir']:
+                output_dir = Path(args['output_dir'])
+                output_dir.mkdir(parents=True, exist_ok=True)
+                
+                for box in predictor.results[i].boxes.xyxy:
+                    x1, y1, x2, y2 = map(int, box[:4])
+                    cropped_img = im0[y1:y2, x1:x2]
+                    img_path = output_dir / f"{p.stem}_frame_{frame_idx}_box_{i}.jpg"
+                    cv2.imwrite(str(img_path), cropped_img)
+
         predictor.run_callbacks('on_predict_batch_end')
 
         # print time (inference-only)
@@ -266,13 +233,14 @@ def parse_opt():
     parser.add_argument('--hide-label', action='store_true', help='hide labels when show')
     parser.add_argument('--hide-conf', action='store_true', help='hide confidences when show')
     parser.add_argument('--save-txt', action='store_true', help='save tracking results in a txt file')
+    parser.add_argument('--output-dir', type=str, default='', help='Directory to save cropped images')
     opt = parser.parse_args()
     print_args(vars(opt))
     return opt
 
 def main(opt):
-    run(vars(opt))
-
+    run(vars(opt)) 
+        
 
 if __name__ == "__main__":
     opt = parse_opt()

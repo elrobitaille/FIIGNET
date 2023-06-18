@@ -3,11 +3,12 @@
 """
 from __future__ import print_function
 
-import torch
+
 import numpy as np
 from .association import *
 from .cmc import CMCComputer
-from boxmot.deep.reid_multibackend import ReIDDetectMultiBackend
+from ..deep.reid_multibackend import ReIDDetectMultiBackend
+from ultralytics_new.ultralytics.yolo.utils.ops import xyxy2xywh
 
 
 
@@ -103,7 +104,6 @@ class KalmanBoxTracker(object):
         else:
             from filterpy.kalman import KalmanFilter
         self.cls = cls
-        
         self.conf = bbox[-1]
         self.new_kf = new_kf
         if new_kf:
@@ -200,7 +200,6 @@ class KalmanBoxTracker(object):
         if bbox is not None:
             self.frozen = False
             self.cls = cls
-            self.conf = bbox[-1]
             if self.last_observation.sum() >= 0:  # no previous observation
                 previous_box = None
                 for dt in range(self.delta_t, 0, -1):
@@ -320,7 +319,7 @@ class OCSort(object):
         model_weights,
         device,
         fp16,
-        det_thresh=0.3,
+        det_thresh,
         max_age=30,
         min_hits=3,
         iou_threshold=0.3,
@@ -372,11 +371,11 @@ class OCSort(object):
         scores = dets[:, 4]
         clss = dets[:, 5]
         
-        classes = clss
-        xyxys = xyxys
-        scores = scores
+        classes = clss.numpy()
+        xyxys = xyxys.numpy()
+        scores = scores.numpy()
         
-        dets = dets[:, 0:6]
+        dets = dets[:, 0:6].numpy()
         remain_inds = scores > self.det_thresh
         dets = dets[remain_inds]
         self.height, self.width = img_numpy.shape[:2]
@@ -527,7 +526,6 @@ class OCSort(object):
         y2 = min(int(y + h / 2), self.height - 1)
         return x1, y1, x2, y2
     
-    @torch.no_grad()
     def _get_features(self, bbox_xyxy, ori_img):
         im_crops = []
         for box in bbox_xyxy:

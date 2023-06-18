@@ -25,8 +25,12 @@ WEIGHTS = EXAMPLES / 'weights'
 def on_predict_start(predictor):
     predictor.trackers = []
     predictor.tracker_outputs = [None] * predictor.dataset.bs
-    predictor.args.tracking_config = '/Users/edgarrobitaille/Desktop/FIIGNET/preprocessing/yolo_tracking/boxmot/deepocsort/configs/deepocsort.yaml'
-
+    predictor.args.tracking_config = \
+        ROOT /\
+        'boxmot' /\
+        opt.tracking_method /\
+        'configs' /\
+        (opt.tracking_method + '.yaml')
     for i in range(predictor.dataset.bs):
         tracker = create_tracker(
             predictor.args.tracking_method,
@@ -77,7 +81,7 @@ def run(args):
     predictor.setup_source(predictor.args.source)
     
     predictor.args.imgsz = (args['img_height'], args['img_width'])
-    predictor.save_dir = Path("/Users/edgarrobitaille/Desktop/FIIGNET/preprocessing/yolo_tracking/runs/track/exp")
+    predictor.save_dir = Path("/home/ugrad/serius/edgarrobitaille/FIIGNET/preprocessing/yolo_tracking/runs/track/exp")
     # check image size
     #predictor.save_dir = increment_path(Path(predictor.args.project) / predictor.args.name, exist_ok=predictor.args.exist_ok)
     
@@ -205,7 +209,7 @@ def parse_opt():
     parser.add_argument('--show', action='store_true', help='display tracking video results')
     parser.add_argument('--save', action='store_true', help='save video tracking results')
     parser.add_argument('--classes', nargs='+', type=int, help='filter by class: --classes 0, or --classes 0 2 3')
-    parser.add_argument('--project', default=ROOT / 'runs' / 'track', help='save results to project/name')
+    parser.add_argument('--project', default='/home/ugrad/serius/edgarrobitaille/FIIGNET/image_data/processed/yolo_output', help='save results to project/name')
     parser.add_argument('--name', default='exp', help='save results to project/name')
     parser.add_argument('--exist-ok', action='store_true', help='existing project/name ok, do not increment')
     parser.add_argument('--half', action='store_true', help='use FP16 half-precision inference')

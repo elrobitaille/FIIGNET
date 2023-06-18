@@ -1,4 +1,4 @@
-__version__ = '10.0.13'
+__version__ = '10.0.3'
 
 from pathlib import Path
 
@@ -12,5 +12,11 @@ from boxmot.deep.reid_multibackend import ReIDDetectMultiBackend
 from boxmot.tracker_zoo import create_tracker, get_tracker_config
 
 
-__all__ = '__version__',\
-          'StrongSORT', 'OCSORT', 'BYTETracker', 'BoTSORT', 'DeepOCSORT'
+FILE = Path(__file__).resolve()
+ROOT = FILE.parent  # root directory
+EXAMPLES = ROOT / 'examples'
+WEIGHTS = ROOT / 'weights'
+
+
+__all__ = '__version__', 'StrongSORT', 'OCSORT', 'BYTETracker', 'BoTSORT',\
+          'DeepOCSORT'  # allow simpler import

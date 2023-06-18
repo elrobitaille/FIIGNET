@@ -10,7 +10,7 @@ from .kalman_filter import KalmanFilter
 from .matching import iou_distance, fuse_score, linear_assignment
 from .basetrack import BaseTrack, TrackState
 
-from boxmot.utils.ops import xywh2xyxy, xyxy2xywh
+from ultralytics_new.ultralytics.yolo.utils.ops import xywh2xyxy, xyxy2xywh
 
 
 class STrack(BaseTrack):
@@ -172,13 +172,13 @@ class BYTETracker(object):
         removed_stracks = []
 
         xyxys = dets[:, 0:4]
-        xywh = xyxy2xywh(xyxys)
+        xywh = xyxy2xywh(xyxys.numpy())
         confs = dets[:, 4]
         clss = dets[:, 5]
         
-        classes = clss
-        xyxys = xyxys
-        confs = confs
+        classes = clss.numpy()
+        xyxys = xyxys.numpy()
+        confs = confs.numpy()
 
         remain_inds = confs > self.track_thresh
         inds_low = confs > 0.1

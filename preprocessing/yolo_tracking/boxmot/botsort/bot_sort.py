@@ -7,10 +7,11 @@ from .matching import iou_distance, fuse_score, linear_assignment, embedding_dis
 from .gmc import GMC
 from .basetrack import BaseTrack, TrackState
 from .kalman_filter import KalmanFilter
-import torch
 
-from boxmot.deep.reid_multibackend import ReIDDetectMultiBackend
-from boxmot.utils.ops import xyxy2xywh, xywh2xyxy
+# from fast_reid.fast_reid_interfece import FastReIDInterface
+
+from ..deep.reid_multibackend import ReIDDetectMultiBackend
+from ultralytics_new.ultralytics.yolo.utils.ops import xyxy2xywh, xywh2xyxy
 
 
 class STrack(BaseTrack):
@@ -275,13 +276,13 @@ class BoTSORT(object):
         removed_stracks = []
         
         xyxys = output_results[:, 0:4]
-        xywh = xyxy2xywh(xyxys)
+        xywh = xyxy2xywh(xyxys.numpy())
         confs = output_results[:, 4]
         clss = output_results[:, 5]
         
-        classes = clss
-        xyxys = xyxys
-        confs = confs
+        classes = clss.numpy()
+        xyxys = xyxys.numpy()
+        confs = confs.numpy()
 
         remain_inds = confs > self.track_high_thresh
         inds_low = confs > 0.1
@@ -481,7 +482,6 @@ class BoTSORT(object):
         y2 = min(int(y + h / 2), self.height - 1)
         return x1, y1, x2, y2
 
-    @torch.no_grad()
     def _get_features(self, bbox_xywh, ori_img):
         im_crops = []
         for box in bbox_xywh:
