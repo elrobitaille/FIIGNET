@@ -1,7 +1,7 @@
 .PHONY: run help clean
 
 resize:
-	python preprocessing/sharpen_image/resize.py $(input_path) $(output_path)
+	python preprocessing/sharpen_image/resize.py $(input_path) $(output_path) $(if $(width),$(width),) $(if $(height),$(height),)
 
 yolo:
 	python preprocessing/yolo_tracking/examples/track.py --source $(input_path) --yolo-model $(weights) $(if $(height),--img-height $(height),) $(if $(width),--img-width $(width),) --save
@@ -35,6 +35,7 @@ clean:
 	rm -rf image_data/unprocessed/resized/*.JPG
 	rm -rf image_data/unprocessed/resized/*.JPEG
 	rm -rf image_data/unprocessed/resized/*.PNG
+	rm -rf image_data/unprocessed/resized/*.png
 	
 	rm -rf image_data/unprocessed/segmented/*.jpg
 	rm -rf image_data/unprocessed/segmented/*.jpeg
@@ -42,6 +43,7 @@ clean:
 	rm -rf image_data/unprocessed/segmented/*.JPG
 	rm -rf image_data/unprocessed/segmented/*.JPEG
 	rm -rf image_data/unprocessed/segmented/*.PNG
+	rm -rf image_data/unprocessed/segmented/*.png
 	
 	rm -rf image_data/processed/crop_enhanced/*.jpg
 	rm -rf image_data/processed/crop_enhanced/*.jpeg
@@ -49,6 +51,7 @@ clean:
 	rm -rf image_data/processed/crop_enhanced/*.JPG
 	rm -rf image_data/processed/crop_enhanced/*.JPEG
 	rm -rf image_data/processed/crop_enhanced/*.PNG
+	rm -rf image_data/processed/crop_enhanced/*.png
 	
 	rm -rf image_data/processed/raw_image_enhanced/*.jpg
 	rm -rf image_data/processed/raw_image_enhanced/*.jpeg
@@ -56,6 +59,7 @@ clean:
 	rm -rf image_data/processed/raw_image_enhanced/*.JPG
 	rm -rf image_data/processed/raw_image_enhanced/*.JPEG
 	rm -rf image_data/processed/raw_image_enhanced/*.PNG
+	rm -rf image_data/processed/raw_image_enhanced/*.png 
 	
 	rm -rf image_data/processed/yolo_output/*.jpg
 	rm -rf image_data/processed/yolo_output/*.jpeg
@@ -63,3 +67,30 @@ clean:
 	rm -rf image_data/processed/yolo_output/*.JPG
 	rm -rf image_data/processed/yolo_output/*.JPEG
 	rm -rf image_data/processed/yolo_output/*.PNG
+	rm -rf image_data/processed/yolo_output/*.png
+
+	rm -rf image_data/processed/ESRGAN_output/enhanced/*.jpg
+	rm -rf image_data/processed/ESRGAN_output/enhanced/*.jpeg
+	rm -rf image_data/processed/ESRGAN_output/enhanced/*.png
+	rm -rf image_data/processed/ESRGAN_output/enhanced/*.JPG
+	rm -rf image_data/processed/ESRGAN_output/enhanced/*.JPEG
+	rm -rf image_data/processed/ESRGAN_output/enhanced/*.PNG
+	rm -rf image_data/processed/ESRGAN_output/enhanced/*.png
+
+	rm -rf image_data/processed/ESRGAN_output/raw/*.jpg
+	rm -rf image_data/processed/ESRGAN_output/raw/*.jpeg
+	rm -rf image_data/processed/ESRGAN_output/raw/*.png
+	rm -rf image_data/processed/ESRGAN_output/raw/*.JPG
+	rm -rf image_data/processed/ESRGAN_output/raw/*.JPEG
+	rm -rf image_data/processed/ESRGAN_output/raw/*.PNG
+	rm -rf image_data/processed/ESRGAN_output/raw/*.png
+
+	rm -rf image_data/processed/square_resize/*.jpg
+	rm -rf image_data/processed/square_resize/*.jpeg
+	rm -rf image_data/processed/square_resize/*.png
+	rm -rf image_data/processed/square_resize/*.JPG
+	rm -rf image_data/processed/square_resize/*.JPEG
+	rm -rf image_data/processed/square_resize/*.PNG
+	rm -rf image_data/processed/square_resize/*.png
+	
+	

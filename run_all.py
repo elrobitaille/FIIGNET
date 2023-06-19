@@ -12,9 +12,10 @@ def main():
     cropped_data_enhanced_path = "/home/ugrad/serius/edgarrobitaille/FIIGNET/image_data/processed/crop_enhanced"
     esrgan_output_path_raw = "/home/ugrad/serius/edgarrobitaille/FIIGNET/image_data/processed/ESRGAN_output/raw"
     esrgan_output_path_enhanced = "/home/ugrad/serius/edgarrobitaille/FIIGNET/image_data/processed/ESRGAN_output/enhanced"
+    square_resized_path = "/home/ugrad/serius/edgarrobitaille/FIIGNET/image_data/processed/square_resize"
 
-    height = "1080"
-    width = "1980"
+    height = 512
+    width = 512
 
     commands = [
         f"make enhance input_dir={raw_data_path} output_dir={raw_data_enhanced_path}",
@@ -23,6 +24,7 @@ def main():
         f"make enhance input_dir={cropped_data_path} output_dir={cropped_data_enhanced_path}",
         f"make esrgan input_dir={cropped_data_enhanced_path} output_dir={esrgan_output_path_raw}",
         f"make enhance input_dir={esrgan_output_path_raw} output_dir={esrgan_output_path_enhanced}",
+        f"make resize input_path={esrgan_output_path_enhanced} output_path={square_resized_path} height={height} width={width}"
     ]
 
     # Run each command in sequence
