@@ -81,9 +81,6 @@ def run(args):
     predictor.setup_source(predictor.args.source)
     
     predictor.args.imgsz = (args['img_height'], args['img_width'])
-    predictor.save_dir = Path("/home/ugrad/serius/edgarrobitaille/FIIGNET/image_data/processed/yolo_output")
-    # check image size
-    #predictor.save_dir = increment_path(Path(predictor.args.project) / predictor.args.name, exist_ok=predictor.args.exist_ok)
     
     # Check if save_dir/ label file exists
     if predictor.args.save or predictor.args.save_txt:

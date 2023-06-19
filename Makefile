@@ -10,8 +10,11 @@ segment:
 	python preprocessing/yolo_tracking/examples/segment.py --source $(input_path) --yolo-model $(weights) --img-height $(height) --img-width $(width) --output-dir $(output_path) --save
 
 enhance:
-	python preprocessing/sharpen_image/process_images.py $(input_dir) $(output_dir) --gaussian --sharpen --smooth
+	python preprocessing/sharpen_image/process_images.py $(input_dir) $(output_dir) --gaussian --sharpen --smooth --denoise --upscale --clahe --edge_enhance
 	
+esrgan:
+	python A-ESRGAN/inference_aesrgan.py --model_path=A-ESRGAN/experiments/pretrained_models/A_ESRGAN_Single.pth --input $(input_dir) --output $(output_dir)
+
 # train:
 #	python classification/train.py --input_path $(input_path) --output_path $(output_path)
 

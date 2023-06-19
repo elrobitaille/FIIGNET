@@ -7,18 +7,22 @@ def main():
     raw_data_path = "/home/ugrad/serius/edgarrobitaille/AquaFinity-main/fish-data/data/healthy/images"
     raw_data_enhanced_path = "/home/ugrad/serius/edgarrobitaille/FIIGNET/image_data/processed/raw_image_enhanced"
     resized_data_path = "/home/ugrad/serius/edgarrobitaille/FIIGNET/image_data/unprocessed/resized"
-    weights = "/home/ugrad/serius/edgarrobitaille/FIIGNET/preprocessing/yolo_tracking/YOLO/runs/detect/yolov8n_results2/weights/best.pt"
+    yolo_weights = "/home/ugrad/serius/edgarrobitaille/FIIGNET/preprocessing/yolo_tracking/YOLO/runs/detect/yolov8n_results2/weights/best.pt"
     cropped_data_path = "/home/ugrad/serius/edgarrobitaille/FIIGNET/image_data/unprocessed/segmented"
     cropped_data_enhanced_path = "/home/ugrad/serius/edgarrobitaille/FIIGNET/image_data/processed/crop_enhanced"
+    esrgan_output_path_raw = "/home/ugrad/serius/edgarrobitaille/FIIGNET/image_data/processed/ESRGAN_output/raw"
+    esrgan_output_path_enhanced = "/home/ugrad/serius/edgarrobitaille/FIIGNET/image_data/processed/ESRGAN_output/enhanced"
 
     height = "1080"
     width = "1980"
 
     commands = [
-        #f"make enhance input_dir={raw_data_path} output_dir={raw_data_enhanced_path}",
-        #f"make resize input_path={raw_data_enhanced_path} output_path={resized_data_path}",
-        f"make segment input_path={resized_data_path} weights={weights} height={height} width={width} output_path={cropped_data_path}",
-        f"make enhance input_dir={cropped_data_path} output_dir={cropped_data_enhanced_path}"
+        f"make enhance input_dir={raw_data_path} output_dir={raw_data_enhanced_path}",
+        f"make resize input_path={raw_data_enhanced_path} output_path={resized_data_path}",
+        f"make segment input_path={resized_data_path} weights={yolo_weights} height={height} width={width} output_path={cropped_data_path}",
+        f"make enhance input_dir={cropped_data_path} output_dir={cropped_data_enhanced_path}",
+        f"make esrgan input_dir={cropped_data_enhanced_path} output_dir={esrgan_output_path_raw}",
+        f"make enhance input_dir={esrgan_output_path_raw} output_dir={esrgan_output_path_enhanced}",
     ]
 
     # Run each command in sequence
