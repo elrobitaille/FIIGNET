@@ -87,3 +87,6 @@ Performs predictions using the trained model with FastAI to predict what type of
 To run the command:
 `make predict input_image="/path/to/input/image.jpg" learner="/path/to/learner.pkl"`
 
+# Questions? 
+Feel free to contact me with any issues/questions: erobita1@jh.edu 
+
