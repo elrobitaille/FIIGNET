@@ -15,19 +15,18 @@ enhance:
 esrgan:
 	python A-ESRGAN/inference_aesrgan.py --model_path=A-ESRGAN/experiments/pretrained_models/A_ESRGAN_Single.pth --input $(input_dir) --output $(output_dir)
 
-# train:
-#	python classification/train.py --input_path $(input_path) --output_path $(output_path)
+train:
+	python classification/train.py --input_path $(input_path) --output_path $(output_path)
 
-#predict:
-#	python classification/predict.py --input_image $(input_image) --learner $(learner)
+predict:
+	python classification/predict.py --input_image $(input_image) --learner $(learner)
 
 help:
-	@echo "How to Run Commands:"
+	@echo "Please check the README.md file for more information."
 
 # Target: clean
 # Remove generated files
 
-# Sorry! Brace expansion wasn't working for me. I'll fix it later.
 clean:
 	rm -rf image_data/unprocessed/resized/*.jpg
 	rm -rf image_data/unprocessed/resized/*.jpeg
