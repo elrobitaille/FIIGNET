@@ -20,9 +20,9 @@ Model Names:
 `--gan`
 2. Stable Diffusion (To generate more realistic fish)
 `--stable_diffusion`
-3. CVAE 
+3. CVAE (Conditional Variational Auto Encoder)
 `--cvae`
-4. FIIGNET 
+4. FIIGNET (Fish Illness Image Generator Network)
 `--fiignet`
 
 Diseases:
@@ -33,25 +33,31 @@ Diseases:
 
 ## To Run Parts Manually: 
 
-1. ### Yolo Processing  
+1. ### Image Resizing 
+Resizes a directory of images and outputs the given specified height and width dimensions. Used to allow the YOLO model to make better decisions and normalize images before processing. Note that height and width are optional, but default is 1980x1080.
+
+To run the command:
+`make resize input_path="path_to_input" output_path="path_to_output" width="?" height="?"`
+
+2. ### Yolo Processing  
 Processes input directory of images and outputs the corresponding YOLO output with red box around fish in a given image or video. Note that height and width are optional arguments if you would like to customize output size, though this may affect YOLO performance greatly. 
 
 To run the command: 
 `make yolo input_path="path_to_input" weights="path_to_weights" height="?" width="?"`
 
-2. ### Yolo Segmentation  
+3. ### Yolo Segmentation  
 Processes yolo image same way as previous command but segments the red YOLO boxes into separate images for each fish in a given image or video. Height and width are optional parameters. 
 
 To run the command:
 `make segment input_path="path_to_input" weights="path_to_weights" height="?" width="?" output_path="path_to_output"`
 
-3. ### Image Enhancer 
+4. ### Image Enhancer 
 Processes the image to potentially enhance the quality. Uses methods/techniques such as the gaussian filter, unsharpen mask, denoising, Savitsky-Golay filter, to try to improve any low resolution images passed through or previously segmented. 
 
 To run the command:
 `make enhance input_dir="/path/to/input" output_dir="/path/to/output"`
 
-4. ### ESRGAN Enhancer
+5. ### ESRGAN Enhancer
 Processes the image using an ESRGAN (Enhanced Super-Resolution Generative Adversarial Network) to enhance the quality of the image by filling in any details of the fish that may be off due to low resolution or quality.
 
 Clone the A-ESRGAN Repo:
