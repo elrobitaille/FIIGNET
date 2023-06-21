@@ -65,50 +65,63 @@ To run the command:
 Processes the image using an ESRGAN (Enhanced Super-Resolution Generative Adversarial Network) to enhance the quality of the image by filling in any details of the fish that may be off due to low resolution or quality.
 
 Clone the A-ESRGAN Repo:
+
 `git clone https://github.com/stroking-fishes-ml-corp/A-ESRGAN`
 
 Move into this Repo:
+
 `mv A-ESRGAN FIIGNET`
 
 To run the command:
+
 `make esrgan input_dir="/path/to/input" output_dir="/path/to/output"`
 
 
 ## Running Part 2 of Pipeline (Strong GPU Required)  
 Clone NVIDIA's StyleGAN3 Repo:
+
 `git clone https://github.com/NVlabs/stylegan3` 
 
 Get Package for Virtual Environment:
+
 `pip install virtualenv`
 
 Create the virtual environment:
+
 `python -m venv env_name`
 
 ### Activate the virtual environment:
 
 MacOS/Unix: 
+
 `source env_name/bin/activate`
 
 Windows:
+
 `.\env_name\Scripts\activate`
 
 Install Requirements:
+
 `pip install -r gan_requirements.txt`
 
 ### Use Make Resize (Part 1) 
 Be sure to Make Images Square Size and Power of 2 (For Example: 256x256, 512x512)
 
 ### Creating the GAN ZIP file:
-Please check the StyleGAN3 Repo for More Information. 
+Please check the StyleGAN3 Repo for More Information.
+
 `python dataset_tool.py --source="/path/to/input" --dest="/path/to/output"`
 
 ### Training the GAN with ZIP file:
 To run the command:
+
 `python train.py --outdir=~/training-runs --cfg=stylegan3-t --data=/path/to/zip/file --gpus=? --batch=? --gamma=?`
 
 ### Generating Images with the Trained File:
 To run the command:
+
 `python gen_images.py --outdir=out --trunc=1 --seeds=2 --network=/path/to/trained/.pkl`
+
 Be sure to check the training-runs directories for the results, and know that this process takes an extremely strong GPU. 
 
 ### To deactivate the virtual environment:
