@@ -38,6 +38,11 @@ Diseases:
 
 ## To Run Parts Manually: 
 
+### Optional Datasize Inflation
+If you would like to increase your dataset using data augmentation techniques, run inflate_data.py with the following code, note that scale factor should be ~ 1.0:
+
+`make inflate input_path=/path/to/your/images brightness=(scale factor) angle=(in degrees)`
+
 1. ### Image Resizing 
 Resizes a directory of images and outputs the given specified height and width dimensions. Used to allow the YOLO model to make better decisions and normalize images before processing. Note that height and width are optional, but default is 1980x1080.
 
