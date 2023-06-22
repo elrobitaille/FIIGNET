@@ -165,6 +165,14 @@ To run the command:
 
 `make predict input_image="/path/to/input/image.jpg" learner="/path/to/learner.pkl"`
 
+# License 
+This code is licensed under the MIT license.
+
+# Project Contributors
+The following contributed to the ideation and building of the pipeline (alphabetical):
+Edgar Robitaille, Amish Sethi, Harley Tran, Kai Wang, Katherine Yue, Kelvin Fong
+
+
 # Questions? 
 Feel free to contact me with any issues/questions: erobita1@jh.edu 
 
