@@ -1,6 +1,6 @@
 
 <p align="center">
-  <img src="Logo.png" alt="FIIGNET Logo" width="425" height="300">
+  <img src="Logo2.png" alt="FIIGNET Logo" width="425" height="300">
 </p>
 
 # Full FIIGNET Pipeline 
