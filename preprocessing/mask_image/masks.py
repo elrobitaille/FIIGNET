@@ -6,53 +6,76 @@ import os
 from segment_anything import sam_model_registry, SamAutomaticMaskGenerator, SamPredictor
 import supervision as sv
 
+def mask_centroid_and_area(mask):
+    moments = cv2.moments(mask)
+    area = moments['m00']
+    centroid = (moments['m10']/area, moments['m01']/area)
+    return centroid, area
+
 def main(args):
-    DEVICE = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
-    MODEL_TYPE = "vit_l"
+    try:
+        DEVICE = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+        MODEL_TYPE = "vit_l"
 
-    sam = sam_model_registry[MODEL_TYPE](checkpoint=args.checkpoint_path)
-    sam.to(device=DEVICE)
+        sam = sam_model_registry[MODEL_TYPE](checkpoint=args.checkpoint_path)
+        sam.to(device=DEVICE)
 
-    mask_generator = SamAutomaticMaskGenerator(sam)
-    mask_predictor = SamPredictor(sam)
+        mask_generator = SamAutomaticMaskGenerator(sam)
+        mask_predictor = SamPredictor(sam)
 
-    # Create directories for annotated images and masks
-    annotated_dir = os.path.join(args.output_path, 'annotated_images')
-    masks_dir = os.path.join(args.output_path, 'masks')
+        annotated_dir = os.path.join(args.output_path, 'annotated_images')
+        masks_dir = os.path.join(args.output_path, 'masks')
+        colored_masks_dir = os.path.join(args.output_path, 'colored_masks')
 
-    os.makedirs(annotated_dir, exist_ok=True)
-    os.makedirs(masks_dir, exist_ok=True)
+        os.makedirs(annotated_dir, exist_ok=True)
+        os.makedirs(masks_dir, exist_ok=True)
+        os.makedirs(colored_masks_dir, exist_ok=True)
 
-    for filename in os.listdir(args.input_path):
-        if filename.endswith(".jpg") or filename.endswith(".png") or filename.endswith(".jpeg") or filename.endswith(".JPG") or filename.endswith(".PNG") or filename.endswith(".JPEG"):
-            image_path = os.path.join(args.input_path, filename)
+        for filename in os.listdir(args.input_path):
+            if filename.endswith((".jpg", ".png", ".jpeg", ".JPG", ".PNG", ".JPEG")):
+                image_path = os.path.join(args.input_path, filename)
 
-            image_bgr = cv2.imread(image_path)
-            image_rgb = cv2.cvtColor(image_bgr, cv2.COLOR_BGR2RGB)
-            result = mask_generator.generate(image_rgb)
+                image_bgr = cv2.imread(image_path)
+                image_rgb = cv2.cvtColor(image_bgr, cv2.COLOR_BGR2RGB)
+                result = mask_generator.generate(image_rgb)
 
-            mask_annotator = sv.MaskAnnotator()
-            detections = sv.Detections.from_sam(result)
-            annotated_image = mask_annotator.annotate(image_bgr, detections)
+                mask_annotator = sv.MaskAnnotator()
+                detections = sv.Detections.from_sam(result)
+                annotated_image = mask_annotator.annotate(image_bgr, detections)
 
-            cv2.imwrite(os.path.join(annotated_dir, f'annotated_{filename}'), annotated_image)
+                cv2.imwrite(os.path.join(annotated_dir, f'annotated_{filename}'), annotated_image)
 
-            mask_predictor = SamPredictor(sam)
-            mask_predictor.set_image(image_rgb)
+                mask_predictor.set_image(image_rgb)
 
-            box = np.array([0, 0, image_rgb.shape[1], image_rgb.shape[0]])  # This needs to be dynamic for different images
-            masks, scores, logits = mask_predictor.predict(
-                box=box,
-                multimask_output=True
-            )
+                box = np.array([0, 0, image_rgb.shape[1], image_rgb.shape[0]])  
+                masks, scores, logits = mask_predictor.predict(box=box, multimask_output=True)
 
-            for i, mask in enumerate(masks):
-                # Convert the boolean mask to an image with values in [0, 255]
-                mask_image = (mask * 255).astype(np.uint8)
-    
-                # Save the mask with a unique filename
-                mask_filename = f'mask_{os.path.splitext(filename)[0]}_{i}.png'
-                cv2.imwrite(os.path.join(masks_dir, mask_filename), mask_image)
+                max_area = 0
+                best_mask = None
+                for i, mask in enumerate(masks):
+                    mask_image = (mask * 255).astype(np.uint8)
+
+                    centroid, area = mask_centroid_and_area(mask_image)
+                    
+                    central_region = (image_rgb.shape[1]*0.25, image_rgb.shape[0]*0.25, image_rgb.shape[1]*0.75, image_rgb.shape[0]*0.75)
+                    if central_region[0] < centroid[0] < central_region[2] and central_region[1] < centroid[1] < central_region[3]:
+                        if area > image_rgb.shape[0] * image_rgb.shape[1] * 0.05 and area > max_area:
+                            max_area = area
+                            best_mask = mask_image
+
+                if best_mask is not None:
+                    # Save the best mask
+                    mask_filename = f'mask_{os.path.splitext(filename)[0]}.png'
+                    cv2.imwrite(os.path.join(masks_dir, mask_filename), best_mask)
+
+                    # Save the colored segmentation
+                    colored_mask = cv2.bitwise_and(image_bgr, image_bgr, mask=best_mask)
+                    colored_mask_filename = f'colored_mask_{os.path.splitext(filename)[0]}.png'
+                    cv2.imwrite(os.path.join(colored_masks_dir, colored_mask_filename), colored_mask)
+    except Exception as e:
+        print(e)
+        pass
+       
 
 
 if __name__ == "__main__":
