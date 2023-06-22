@@ -1,4 +1,8 @@
-![FIIGNET Logo](Logo.png)
+
+<p align="center">
+  <img src="Logo.png" alt="FIIGNET Logo" width="300" height="300">
+</p>
+
 
 
 # Full FIIGNET Pipeline 
