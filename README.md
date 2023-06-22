@@ -170,6 +170,7 @@ This code is licensed under the MIT license.
 
 # Project Contributors
 The following contributed to the ideation and building of the pipeline (alphabetical):
+
 Edgar Robitaille, Amish Sethi, Harley Tran, Kai Wang, Katherine Yue, Kelvin Fong
 
 
