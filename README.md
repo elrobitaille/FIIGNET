@@ -59,12 +59,26 @@ To run the command:
 
 `make segment input_path="path_to_input" weights="path_to_weights" height="?" width="?" output_path="path_to_output"`
 
+4. ### Facebook's Segment Anything Segmentation & Masking
+Using Facebook's Segment Anything Segmentation (SAM), each individual item in an image can be segmented. From here, certain algorithms and assumptions can be used to determine what in the object is the fish, and thereby allow the creation of a mask that only contains the fish portion of the image. Note that this is passed through AFTER the YOLO Model. Note that facebook provides checkpoint pth models, this has been mainly tested with the vit_l model. Please check the repository for more information and pip requirements. 
+
+Cloning the Repo:
+`git clone https://github.com/facebookresearch/segment-anything`
+
+Download Pip Requirements:
+`pip install git+https://github.com/facebookresearch/segment-anything.git`
+
+`pip install opencv-python pycocotools matplotlib onnxruntime onnx`
+
+To run the command:
+`make mask input_path="path_to_input" checkpoint_path="path_to_checkpoints.pth" output_path="path_to_output"`
+
 4. ### Image Enhancer 
 Processes the image to potentially enhance the quality. Uses methods/techniques such as the gaussian filter, unsharpen mask, denoising, Savitsky-Golay filter, to try to improve any low resolution images passed through or previously segmented. 
 
 To run the command:
 
-`make enhance input_dir="/path/to/input" output_dir="/path/to/output"`
+`make enhance input_path="/path/to/input" output_path="/path/to/output"`
 
 5. ### ESRGAN Enhancer
 Processes the image using an ESRGAN (Enhanced Super-Resolution Generative Adversarial Network) to enhance the quality of the image by filling in any details of the fish that may be off due to low resolution or quality.
@@ -79,7 +93,7 @@ Move into this Repo:
 
 To run the command:
 
-`make esrgan input_dir="/path/to/input" output_dir="/path/to/output"`
+`make esrgan input_path="/path/to/input" output_path="/path/to/output"`
 
 
 ## Running Part 2 of Pipeline (Strong GPU Required)  
