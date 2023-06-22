@@ -9,6 +9,9 @@ yolo:
 segment:
 	python preprocessing/yolo_tracking/examples/segment.py --source $(input_path) --yolo-model $(weights) --img-height $(height) --img-width $(width) --output-dir $(output_path) --save
 
+mask:
+	python preprocessing/mask_image/masks.py --image_dir $(image_dir) --checkpoint_path $(checkpoint_path) --out_path $(output_path)
+
 enhance:
 	python preprocessing/sharpen_image/process_images.py $(input_dir) $(output_dir) --gaussian --sharpen --smooth --denoise --upscale --clahe --edge_enhance
 	
@@ -91,5 +94,22 @@ clean:
 	rm -rf image_data/processed/square_resize/*.JPEG
 	rm -rf image_data/processed/square_resize/*.PNG
 	rm -rf image_data/processed/square_resize/*.png
+
+	rm -rf preprocessing/mask_image/annotated_images/*.jpg
+	rm -rf preprocessing/mask_image/annotated_images/*.jpeg
+	rm -rf preprocessing/mask_image/annotated_images/*.png
+	rm -rf preprocessing/mask_image/annotated_images/*.JPG
+	rm -rf preprocessing/mask_image/annotated_images/*.JPEG
+	rm -rf preprocessing/mask_image/annotated_images/*.PNG
+	rm -rf preprocessing/mask_image/annotated_images/*.png
+
+	rm -rf preprocessing/mask_image/masks/*.jpg
+	rm -rf preprocessing/mask_image/masks/*.jpeg
+	rm -rf preprocessing/mask_image/masks/*.png
+	rm -rf preprocessing/mask_image/masks/*.JPG
+	rm -rf preprocessing/mask_image/masks/*.JPEG
+	rm -rf preprocessing/mask_image/masks/*.PNG
+	rm -rf preprocessing/mask_image/masks/*.png
+	
 	
 	
