@@ -66,11 +66,13 @@ Cloning the Repo:
 `git clone https://github.com/facebookresearch/segment-anything`
 
 Download Pip Requirements:
+
 `pip install git+https://github.com/facebookresearch/segment-anything.git`
 
 `pip install opencv-python pycocotools matplotlib onnxruntime onnx`
 
 To run the command:
+
 `make mask input_path="path_to_input" checkpoint_path="path_to_checkpoints.pth" output_path="path_to_output"`
 
 4. ### Image Enhancer 
