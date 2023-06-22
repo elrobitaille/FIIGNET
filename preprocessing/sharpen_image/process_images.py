@@ -54,16 +54,16 @@ def process_image(image_path, output_dir, filters):
     except Exception as e:
         print(f"An error occurred while processing image at path: {image_path}. Error: {str(e)}")
 
-def process_directory(input_dir, output_dir, filters):
-    for filename in os.listdir(input_dir):
+def process_directory(input_path, output_path, filters):
+    for filename in os.listdir(input_path):
         if filename.endswith(('.png', '.jpg', '.jpeg', '.bmp', '.gif')):
-            file_path = os.path.join(input_dir, filename)
-            process_image(file_path, output_dir, filters)
+            file_path = os.path.join(input_path, filename)
+            process_image(file_path, output_path, filters)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Process images with various filters.')
-    parser.add_argument('input_dir', help='Directory of input images.')
-    parser.add_argument('output_dir', help='Directory to save processed images.')
+    parser.add_argument('input_path', help='Directory of input images.')
+    parser.add_argument('output_path', help='Directory to save processed images.')
     parser.add_argument('--gaussian', action='store_true', help='Apply Gaussian filter.')
     parser.add_argument('--sharpen', action='store_true', help='Apply Unsharp Mask sharpening.')
     parser.add_argument('--smooth', action='store_true', help='Apply Savitzky-Golay smoothing.')
@@ -81,4 +81,4 @@ if __name__ == "__main__":
         'clahe': apply_clahe if args.clahe else None,
         'edge_enhance': edge_enhancement if args.edge_enhance else None,
     }
-    process_directory(args.input_dir, args.output_dir, filters)
+    process_directory(args.input_path, args.output_path, filters)
