@@ -3,6 +3,9 @@
 resize:
 	python preprocessing/sharpen_image/resize.py $(input_path) $(output_path) $(if $(width),$(width),) $(if $(height),$(height),)
 
+inflate:
+	python preprocessing/data_aug/inflate_data.py -d $(input_path) -b $(brightness) -r $(angle)
+
 yolo:
 	python preprocessing/yolo_tracking/examples/track.py --source $(input_path) --yolo-model $(weights) $(if $(height),--img-height $(height),) $(if $(width),--img-width $(width),) --save
 
@@ -111,5 +114,12 @@ clean:
 	rm -rf preprocessing/mask_image/masks/*.PNG
 	rm -rf preprocessing/mask_image/masks/*.png
 	
+	rm -rf image_data/unprocessed/raw/*.jpg
+	rm -rf image_data/unprocessed/raw/*.jpeg
+	rm -rf image_data/unprocessed/raw/*.png
+	rm -rf image_data/unprocessed/raw/*.JPG
+	rm -rf image_data/unprocessed/raw/*.JPEG
+	rm -rf image_data/unprocessed/raw/*.PNG
+	rm -rf image_data/unprocessed/raw/*.png
 	
 	

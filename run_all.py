@@ -19,11 +19,11 @@ def main(use_gpu, model, disease):
     width = 512
 
     commands = [
-       # f"make enhance input_path={raw_data_path} output_path={raw_data_enhanced_path}",
-       # f"make resize input_path={raw_data_enhanced_path} output_path={resized_data_path}",
-       # f"make segment input_path={resized_data_path} weights={yolo_weights} height={height} width={width} output_path={cropped_data_path}",
+        f"make enhance input_path={raw_data_path} output_path={raw_data_enhanced_path}",
+        f"make resize input_path={raw_data_enhanced_path} output_path={resized_data_path}",
+        f"make segment input_path={resized_data_path} weights={yolo_weights} height={height} width={width} output_path={cropped_data_path}",
         f"make mask input_path={cropped_data_path} checkpoint_path={facebook_checkpts} output_path={facebook_mask_output}",
-        f"make esrgan input_path={facebook_mask_output} output_path={esrgan_output_path}",
+        # f"make esrgan input_path={facebook_mask_output} output_path={esrgan_output_path}",
         f"make resize input_path={esrgan_output_path} output_path={square_resized_path} height={height} width={width}"
     ]
 
