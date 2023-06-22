@@ -1,6 +1,6 @@
 
 <p align="center">
-  <img src="Logo.png" alt="FIIGNET Logo" width="300" height="300">
+  <img src="Logo.png" alt="FIIGNET Logo" width="500" height="300">
 </p>
 
 
