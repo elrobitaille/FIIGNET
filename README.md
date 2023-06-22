@@ -1,3 +1,6 @@
+![FIIGNET Logo](Logo.png)
+
+
 # Full FIIGNET Pipeline 
 
 ## Starting Requirements 
@@ -110,7 +113,7 @@ Be sure to Make Images Square Size and Power of 2 (For Example: 256x256, 512x512
 ### Creating the GAN ZIP file:
 Please check the StyleGAN3 Repo for More Information.
 
-`python dataset_tool.py --source="/path/to/input" --dest="/path/to/output"`
+`python dataset_tool.py --source="/path/to/input" --dest="/path/to/output.zip"`
 
 ### Training the GAN with ZIP file:
 To run the command:
