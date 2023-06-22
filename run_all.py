@@ -5,7 +5,7 @@ import subprocess
 import argparse
 
 def main(use_gpu, model, disease):
-    raw_data_path = "/home/ugrad/serius/edgarrobitaille/test" # Change this to the path of the raw image data
+    raw_data_path = "/home/ugrad/serius/edgarrobitaille/AquaFinity-main/fish-data/data/unhealthy/Ichy" # Change this to the path of the raw image data
     raw_data_enhanced_path = "/home/ugrad/serius/edgarrobitaille/FIIGNET/image_data/processed/raw_image_enhanced" # Change this to the path of the enhanced images
     resized_data_path = "/home/ugrad/serius/edgarrobitaille/FIIGNET/image_data/unprocessed/resized" # Change this to the path of the resized images
     yolo_weights = "/home/ugrad/serius/edgarrobitaille/FIIGNET/preprocessing/yolo_tracking/YOLO/runs/detect/yolov8n_results2/weights/best.pt" # Change this to the path of the YOLO weights
@@ -19,11 +19,12 @@ def main(use_gpu, model, disease):
     width = 512
 
     commands = [
+        f"make enhance input_dir={raw_data_path} output_dir={raw_data_enhanced_path}",
         f"make resize input_path={raw_data_enhanced_path} output_path={resized_data_path}",
         f"make segment input_path={resized_data_path} weights={yolo_weights} height={height} width={width} output_path={cropped_data_path}",
-        f"make mask input_dir={cropped_data_path} checkpoint_path={facebook_checkpts} output_path={facebook_mask_output}",
-        #f"make esrgan input_dir={facebook_mask_output} output_dir={esrgan_output_path}",
-        #f"make resize input_path={esrgan_output_path} output_path={square_resized_path} height={height} width={width}"
+        f"make mask image_dir={cropped_data_path} checkpoint_path={facebook_checkpts} output_path={facebook_mask_output}",
+        f"make esrgan input_dir={facebook_mask_output} output_dir={esrgan_output_path}",
+        f"make resize input_path={esrgan_output_path} output_path={square_resized_path} height={height} width={width}"
     ]
 
     # Run each command in sequence
