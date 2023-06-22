@@ -24,7 +24,7 @@ def main(args):
     os.makedirs(masks_dir, exist_ok=True)
 
     for filename in os.listdir(args.image_dir):
-        if filename.endswith(".jpg") or filename.endswith(".png"):  # add more conditions if there are other image types
+        if filename.endswith(".jpg") or filename.endswith(".png") or filename.endswith(".jpeg") or filename.endswith(".JPG") or filename.endswith(".PNG") or filename.endswith(".JPEG"):
             image_path = os.path.join(args.image_dir, filename)
 
             image_bgr = cv2.imread(image_path)
