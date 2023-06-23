@@ -5,26 +5,26 @@ import subprocess
 import argparse
 
 def main(use_gpu, model, disease):
-    raw_data_path = "/home/ugrad/serius/edgarrobitaille/AquaFinity-main/fish-data/data/unhealthy/Ichy" # Change this to the path of the raw image data
-    raw_data_enhanced_path = "/home/ugrad/serius/edgarrobitaille/FIIGNET/image_data/processed/raw_image_enhanced" # Change this to the path of the enhanced images
-    resized_data_path = "/home/ugrad/serius/edgarrobitaille/FIIGNET/image_data/unprocessed/resized" # Change this to the path of the resized images
-    yolo_weights = "/home/ugrad/serius/edgarrobitaille/FIIGNET/preprocessing/yolo_tracking/YOLO/runs/detect/yolov8n_results2/weights/best.pt" # Change this to the path of the YOLO weights
-    facebook_checkpts = "/home/ugrad/serius/edgarrobitaille/segment-anything/sam_vit_l_0b3195.pth" # Change this to the path of the Facebook checkpoints
-    facebook_mask_output = "/home/ugrad/serius/edgarrobitaille/FIIGNET/preprocessing/mask_image" # Change this to the path of the output for Facebook's model
-    cropped_data_path = "/home/ugrad/serius/edgarrobitaille/FIIGNET/image_data/unprocessed/segmented" # Change this to the path of the segmented images
-    esrgan_output_path = "/home/ugrad/serius/edgarrobitaille/FIIGNET/image_data/processed/ESRGAN_output" # Change this to the path of the ESRGAN output images
-    square_resized_path = "/home/ugrad/serius/edgarrobitaille/FIIGNET/image_data/processed/square_resize" # Change this to the path of the square resized images for the GAN in Part 2
+    raw_data_path = "image_data/unprocessed/raw" # Change this to the path of the raw image data
+    raw_data_enhanced_path = "image_data/processed/raw_image_enhanced" # Change this to the path of the enhanced images
+    resized_data_path = "image_data/unprocessed/resized" # Change this to the path of the resized images
+    yolo_weights = "preprocessing/yolo_tracking/YOLO/runs/detect/yolov8n_results2/weights/best.pt" # Change this to the path of the YOLO weights
+    facebook_checkpts = "segment-anything/sam_vit_l_0b3195.pth" # Change this to the path of the Facebook checkpoints
+    facebook_mask_output = "preprocessing/mask_image" # Change this to the path of the output for Facebook's model
+    cropped_data_path = "image_data/unprocessed/segmented" # Change this to the path of the segmented images
+    esrgan_output_path = "image_data/processed/ESRGAN_output" # Change this to the path of the ESRGAN output images
+    square_resized_path = "image_data/processed/square_resize" # Change this to the path of the square resized images for the GAN in Part 2
+    colored_mask_path = "preprocessing/mask_image/colored_masks" # Change this to the path of the colored masks for the GAN in Part 2
 
-    height = 512
-    width = 512
+    height = 512 # Change for output size of Part 1 
+    width = 512 # Change for output size of Part 1 
 
-    commands = [
+    commands = [ # Change if you would like to change the ran commands based on Makefile
         f"make enhance input_path={raw_data_path} output_path={raw_data_enhanced_path}",
         f"make resize input_path={raw_data_enhanced_path} output_path={resized_data_path}",
         f"make segment input_path={resized_data_path} weights={yolo_weights} height={height} width={width} output_path={cropped_data_path}",
         f"make mask input_path={cropped_data_path} checkpoint_path={facebook_checkpts} output_path={facebook_mask_output}",
-        # f"make esrgan input_path={facebook_mask_output} output_path={esrgan_output_path}",
-        f"make resize input_path={esrgan_output_path} output_path={square_resized_path} height={height} width={width}"
+        f"make resize input_path={colored_mask_path} output_path={square_resized_path} height={height} width={width}"
     ]
 
     # Run each command in sequence

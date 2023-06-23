@@ -113,7 +113,7 @@ clean:
 	rm -rf preprocessing/mask_image/masks/*.JPEG
 	rm -rf preprocessing/mask_image/masks/*.PNG
 	rm -rf preprocessing/mask_image/masks/*.png
-	
+
 	rm -rf image_data/unprocessed/raw/*.jpg
 	rm -rf image_data/unprocessed/raw/*.jpeg
 	rm -rf image_data/unprocessed/raw/*.png
@@ -121,5 +121,15 @@ clean:
 	rm -rf image_data/unprocessed/raw/*.JPEG
 	rm -rf image_data/unprocessed/raw/*.PNG
 	rm -rf image_data/unprocessed/raw/*.png
+	
+	rm -rf preprocessing/mask_image/colored_masks/*.jpg
+	rm -rf preprocessing/mask_image/colored_masks/*.jpeg
+	rm -rf preprocessing/mask_image/colored_masks/*.png
+	rm -rf preprocessing/mask_image/colored_masks/*.JPG
+	rm -rf preprocessing/mask_image/colored_masks/*.JPEG
+	rm -rf preprocessing/mask_image/colored_masks/*.PNG
+	rm -rf preprocessing/mask_image/colored_masks/*.png
+	
+	
 	
 	
