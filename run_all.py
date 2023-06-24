@@ -41,34 +41,6 @@ def main(use_gpu, model, disease):
     else:
         print("A high-performance GPU is needed to train the GAN, such as a NVIDIA Tesla P100 GPU or better. Please refer to the instructions in the README.md file for more information. ")
 
-    if model == 'gan' and use_gpu:
-        print("Running GAN code")
-        if disease == 'ich':
-            pass
-        elif disease == 'red_spot':
-            pass
-       
-    elif model == 'stable_diffusion' and use_gpu:
-        print("Running Stable Diffusion code")
-        if disease == 'ich':
-            pass
-        elif disease == 'red_spot':
-            pass
-        
-    elif model == 'cvae' and use_gpu:
-        print("Running CVAE code")
-        if disease == 'ich':
-            pass
-        elif disease == 'red_spot':
-            pass
-       
-    elif model == 'fiignet' and use_gpu:
-        print("Running FIIGNET code")
-        if disease == 'ich':
-            pass
-        elif disease == 'red_spot':
-            pass
-
     print("Full pipeline complete!")
 
 if __name__ == "__main__":
@@ -89,6 +61,8 @@ if __name__ == "__main__":
 
     # Diseases group
     group_diseases = parser.add_mutually_exclusive_group(required=True)
+    group_diseases.add_argument('--healthy', dest='disease', action='store_const', const='healthy',
+                        help='run code for healthy fish')
     group_diseases.add_argument('--ich', dest='disease', action='store_const', const='ich',
                         help='run code for ICH')
     group_diseases.add_argument('--red_spot', dest='disease', action='store_const', const='red_spot',

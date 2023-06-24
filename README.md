@@ -88,23 +88,9 @@ To run the command:
 
 `make enhance input_path="/path/to/input" output_path="/path/to/output"`
 
-6. ### ESRGAN Enhancer
-Processes the image using an ESRGAN (Enhanced Super-Resolution Generative Adversarial Network) to enhance the quality of the image by filling in any details of the fish that may be off due to low resolution or quality.
-
-Clone the A-ESRGAN Repo:
-
-`git clone https://github.com/stroking-fishes-ml-corp/A-ESRGAN`
-
-Move into this Repo:
-
-`mv A-ESRGAN FIIGNET`
-
-To run the command:
-
-`make esrgan input_path="/path/to/input" output_path="/path/to/output"`
-
-
 ## Running Part 2 of Pipeline (Strong GPU Required)  
+
+### Running NVIDIA StyleGAN3 Repo:   
 Clone NVIDIA's StyleGAN3 Repo:
 
 `git clone https://github.com/NVlabs/stylegan3` 
@@ -153,6 +139,51 @@ Be sure to check the training-runs directories for the results, and know that th
 
 ### To deactivate the virtual environment:
 `deactivate`
+
+### Running InvokeAI's Stable Diffusion:   
+Go to the repository website, download the pip requirements, and follow instructions up to Step 6:
+
+`https://github.com/invoke-ai/InvokeAI/tree/main`
+
+# To train your own model: 
+
+1. Move into the folder:
+`cd invokeai`
+
+2. Activate the Virtual Environment:
+
+For Linux/Mac Users:
+`source .venv/bin/activate`
+
+For Windows Users:
+`.venv\Scripts\activate`
+
+3. Take a folder of around 5 - 20 high-resolution images and move into training directory (Make sure keyword is in folder name):
+
+`mv path/to/input/images text-inversion-training-data` 
+
+4. Invoke the training UI:
+
+For Linux/Mac Users:
+`./invoke.sh`
+
+For Windows Users:
+`./invoke.bat`  
+
+5. Write # 3 to Command Line 
+
+6. Activate the InvokeAI virtual environment:
+
+`invokeai-ti --gui`
+
+7. Select your parameters and train. We strongly suggest stable-diffusion-1.5. 
+
+Note that `logging_dir` may have to be changed to `project_dir` as there may be pip issues involved. 
+
+# Using our pre-trained models: 
+
+
+
 
 ## Running Part 3 of Pipeline (No Strong GPU Required)
 

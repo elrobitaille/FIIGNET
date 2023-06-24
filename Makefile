@@ -18,9 +18,6 @@ mask:
 enhance:
 	python preprocessing/sharpen_image/process_images.py $(input_path) $(output_path) --gaussian --sharpen --smooth --denoise --upscale --clahe --edge_enhance
 	
-esrgan:
-	python A-ESRGAN/inference_aesrgan.py --model_path=A-ESRGAN/experiments/pretrained_models/A_ESRGAN_Single.pth --input $(input_path) --output $(output_path)
-
 train:
 	python classification/train.py --input_path $(input_path) --output_path $(output_path)
 
