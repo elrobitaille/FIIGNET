@@ -145,7 +145,7 @@ Go to the repository website, download the pip requirements, and follow instruct
 
 `https://github.com/invoke-ai/InvokeAI/tree/main`
 
-# To train your own model: 
+## To train your own model: 
 
 1. Move into the folder:
 `cd invokeai`
@@ -180,10 +180,7 @@ For Windows Users:
 
 Note that `logging_dir` may have to be changed to `project_dir` as there may be pip issues involved. 
 
-# Using our pre-trained models: 
-
-
-
+## Using our pre-trained models: 
 
 ## Running Part 3 of Pipeline (No Strong GPU Required)
 
