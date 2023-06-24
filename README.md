@@ -149,12 +149,12 @@ Be sure to check the training-runs directories for the results, and know that th
 ### 6. To deactivate the virtual environment:
 `deactivate`
 
-### Running InvokeAI's Stable Diffusion:   
+## Running InvokeAI's Stable Diffusion:   
 Go to the repository website, download the pip requirements, and follow instructions up to Step 6:
 
 `https://github.com/invoke-ai/InvokeAI/tree/main`
 
-## To train your own model: 
+### To train your own model: 
 
 1. Move into the folder:
 
@@ -194,7 +194,7 @@ For Windows Users:
 
 Note that `logging_dir` may have to be changed to `project_dir` as there may be pip issues involved. 
 
-## Using our pre-trained models: 
+### Using our pre-trained models: 
 
 ## Running Part 3 of Pipeline (No Strong GPU Required)
 
