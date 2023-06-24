@@ -30,11 +30,20 @@ Model Names:
 4. FIIGNET (Fish Illness Image Generator Network)
 `--fiignet`
 
-Diseases:
-1. Ich (White Spot Disease) 
+Conditions:
+1. Healthy Fish 
+`--healthy`
+2. Ich (White Spot Disease) 
 `--ich`
-2. Red Spot Disease 
+3. Red Spot Disease 
 `--red_spot`
+4. Fin Rot 
+`--fin_rot` 
+
+Other Parameters:
+1. If you want input image backgrounds included in final results: 
+`--background`
+
 
 ## To Run Parts Manually: 
 
@@ -103,7 +112,7 @@ Create the virtual environment:
 
 `python -m venv env_name`
 
-### Activate the virtual environment:
+### 1. Activate the virtual environment:
 
 MacOS/Unix: 
 
@@ -117,27 +126,27 @@ Install Requirements:
 
 `pip install -r gan_requirements.txt`
 
-### Use Make Resize (Part 1) 
+### 2. Use Make Resize (Part 1) 
 Be sure to Make Images Square Size and Power of 2 (For Example: 256x256, 512x512)
 
-### Creating the GAN ZIP file:
+### 3. Creating the GAN ZIP file:
 Please check the StyleGAN3 Repo for More Information.
 
 `python dataset_tool.py --source="/path/to/input" --dest="/path/to/output.zip"`
 
-### Training the GAN with ZIP file:
+### 4. Training the GAN with ZIP file:
 To run the command:
 
 `python train.py --outdir=~/training-runs --cfg=stylegan3-t --data=/path/to/zip/file --gpus=? --batch=? --gamma=?`
 
-### Generating Images with the Trained File:
+### 5. Generating Images with the Trained File:
 To run the command:
 
 `python gen_images.py --outdir=out --trunc=1 --seeds=2 --network=/path/to/trained/.pkl`
 
 Be sure to check the training-runs directories for the results, and know that this process takes an extremely strong GPU. 
 
-### To deactivate the virtual environment:
+### 6. To deactivate the virtual environment:
 `deactivate`
 
 ### Running InvokeAI's Stable Diffusion:   
@@ -148,14 +157,17 @@ Go to the repository website, download the pip requirements, and follow instruct
 ## To train your own model: 
 
 1. Move into the folder:
+
 `cd invokeai`
 
 2. Activate the Virtual Environment:
 
 For Linux/Mac Users:
+
 `source .venv/bin/activate`
 
 For Windows Users:
+
 `.venv\Scripts\activate`
 
 3. Take a folder of around 5 - 20 high-resolution images and move into training directory (Make sure keyword is in folder name):
@@ -165,9 +177,11 @@ For Windows Users:
 4. Invoke the training UI:
 
 For Linux/Mac Users:
+
 `./invoke.sh`
 
 For Windows Users:
+
 `./invoke.bat`  
 
 5. Write # 3 to Command Line 
