@@ -16,8 +16,11 @@ mask:
 	python preprocessing/mask_image/masks.py --input_path $(input_path) --checkpoint_path $(checkpoint_path) --output_path $(output_path)
 
 enhance:
-	python preprocessing/sharpen_image/process_images.py $(input_path) $(output_path) --gaussian --sharpen --smooth --denoise --upscale --clahe --edge_enhance
+	python preprocessing/sharpen_image/process_images.py $(input_path) $(output_path) --sharpen --clahe
 	
+package:
+	python /home/ugrad/serius/edgarrobitaille/stylegan3/dataset_tool.py --source $(input_path) --dest $(output_path)
+
 train:
 	python classification/train.py --input_path $(input_path) --output_path $(output_path)
 
