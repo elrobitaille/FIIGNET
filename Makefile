@@ -136,6 +136,13 @@ clean:
 	rm -rf preprocessing/mask_image/colored_masks/*.PNG
 	rm -rf preprocessing/mask_image/colored_masks/*.png
 	
+	rm -rf preprocessing/Detectron/detect_outputs/*.jpg
+	rm -rf preprocessing/Detectron/detect_outputs/*.jpeg
+	rm -rf preprocessing/Detectron/detect_outputs/*.png
+	rm -rf preprocessing/Detectron/detect_outputs/*.JPG
+	rm -rf preprocessing/Detectron/detect_outputs/*.JPEG
+	rm -rf preprocessing/Detectron/detect_outputs/*.PNG
+	rm -rf preprocessing/Detectron/detect_outputs/*.png
 	
 	
 	
