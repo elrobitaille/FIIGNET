@@ -6,11 +6,8 @@ resize:
 inflate:
 	python preprocessing/data_aug/inflate_data.py -d $(input_path) -b $(brightness) -r $(angle)
 
-yolo:
-	python preprocessing/yolo_tracking/examples/track.py --source $(input_path) --yolo-model $(weights) $(if $(height),--img-height $(height),) $(if $(width),--img-width $(width),) --save
-
-segment:
-	python preprocessing/yolo_tracking/examples/segment.py --source $(input_path) --yolo-model $(weights) --img-height $(height) --img-width $(width) --output-dir $(output_path) --save
+crop:
+	python preprocessing/Detectron/detector.py --input_path $(input_path) --output_path $(output_path)
 
 mask:
 	python preprocessing/mask_image/masks.py --input_path $(input_path) --checkpoint_path $(checkpoint_path) --output_path $(output_path)
@@ -29,6 +26,15 @@ predict:
 
 help:
 	@echo "Please check the README.md file for more information."
+
+# OPTIONAL PARAMETERS TO PLAY WITH
+
+# YOLO just gives the output red boxes, segment will splice images of red boxes separately and save them in the output directory
+yolo:
+	python preprocessing/yolo_tracking/examples/track.py --source $(input_path) --yolo-model $(weights) $(if $(height),--img-height $(height),) $(if $(width),--img-width $(width),) --save
+
+segment:
+	python preprocessing/yolo_tracking/examples/segment.py --source $(input_path) --yolo-model $(weights) --img-height $(height) --img-width $(width) --output-dir $(output_path) --save
 
 # Target: clean
 # Remove generated files
