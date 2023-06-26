@@ -13,11 +13,11 @@ class Detector():
     def __init__(self):
         self.cfg = get_cfg()
 
-        self.cfg.merge_from_file(model_zoo.get_config_file("COCO-Detection/retinanet_R_101_FPN_3x.yaml"))
-        self.cfg.MODEL.WEIGHTS = model_zoo.get_checkpoint_url("COCO-Detection/retinanet_R_101_FPN_3x.yaml")
+        self.cfg.merge_from_file(model_zoo.get_config_file("COCO-InstanceSegmentation/mask_rcnn_X_101_32x8d_FPN_3x.yaml"))
+        self.cfg.MODEL.WEIGHTS = model_zoo.get_checkpoint_url("COCO-InstanceSegmentation/mask_rcnn_X_101_32x8d_FPN_3x.yaml")
 
 
-        self.cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.99
+        self.cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.05
         self.cfg.MODEL.DEVICE = 'cuda'
 
         self.predictor = DefaultPredictor(self.cfg)
@@ -27,15 +27,22 @@ class Detector():
             image = cv2.imread(imagePath)
             if image is None:
                 print(f"Failed to read image at {imagePath}")
-                pass
+                return
 
             predictions = self.predictor(image)
             instances = predictions["instances"].to("cpu")
             if len(instances) == 0:
                 print(f"No instances detected in the image: {imagePath}")
-                pass
+                return
 
-            for i, box in enumerate(instances.pred_boxes):
+            metadata = MetadataCatalog.get(self.cfg.DATASETS.TRAIN[0])
+            class_names = metadata.get("thing_classes", None)
+
+            for i, (box, class_id) in enumerate(zip(instances.pred_boxes, instances.pred_classes)):
+                class_name = class_names[class_id]
+                if class_name not in {"bird", "fish"}:
+                    continue
+                
                 x1, y1, x2, y2 = box.int().numpy()
                 cropped_image = image[y1:y2, x1:x2]
                 filename = os.path.splitext(os.path.basename(imagePath))[0]
@@ -44,6 +51,7 @@ class Detector():
         except Exception as e:
             print(f"Failed to process image at {imagePath} due to {str(e)}")
             traceback.print_exc()  # This will print the full traceback
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

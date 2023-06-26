@@ -143,6 +143,14 @@ clean:
 	rm -rf preprocessing/Detectron/detect_outputs/*.JPEG
 	rm -rf preprocessing/Detectron/detect_outputs/*.PNG
 	rm -rf preprocessing/Detectron/detect_outputs/*.png
+
+	rm -rf SD_output/*.jpg
+	rm -rf SD_output/*.jpeg
+	rm -rf SD_output/*.png
+	rm -rf SD_output/*.JPG
+	rm -rf SD_output/*.JPEG
+	rm -rf SD_output/*.PNG
+	
 	
 	
 	

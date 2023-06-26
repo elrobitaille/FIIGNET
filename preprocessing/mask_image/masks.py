@@ -6,6 +6,9 @@ import os
 from segment_anything import sam_model_registry, SamAutomaticMaskGenerator, SamPredictor
 import supervision as sv
 
+CENTROID_REGION_PERCENT = 0.3 # Change for different centroid region
+AREA_MIN_PERCENT = 0.15 # Change for different area minimum
+
 def mask_centroid_and_area(mask):
     moments = cv2.moments(mask)
     area = moments['m00']
@@ -36,6 +39,10 @@ def main(args):
                 image_path = os.path.join(args.input_path, filename)
 
                 image_bgr = cv2.imread(image_path)
+                if image_bgr is None:
+                    print(f"Failed to read image at {image_path}")
+                    continue
+
                 image_rgb = cv2.cvtColor(image_bgr, cv2.COLOR_BGR2RGB)
                 result = mask_generator.generate(image_rgb)
 
@@ -57,9 +64,9 @@ def main(args):
 
                     centroid, area = mask_centroid_and_area(mask_image)
                     
-                    central_region = (image_rgb.shape[1]*0.25, image_rgb.shape[0]*0.25, image_rgb.shape[1]*0.75, image_rgb.shape[0]*0.75)
+                    central_region = (image_rgb.shape[1]*CENTROID_REGION_PERCENT, image_rgb.shape[0]*CENTROID_REGION_PERCENT, image_rgb.shape[1]*(1-CENTROID_REGION_PERCENT), image_rgb.shape[0]*(1-CENTROID_REGION_PERCENT))
                     if central_region[0] < centroid[0] < central_region[2] and central_region[1] < centroid[1] < central_region[3]:
-                        if area > image_rgb.shape[0] * image_rgb.shape[1] * 0.05 and area > max_area:
+                        if area > image_rgb.shape[0] * image_rgb.shape[1] * AREA_MIN_PERCENT and area > max_area:
                             max_area = area
                             best_mask = mask_image
 
@@ -73,10 +80,9 @@ def main(args):
                     colored_mask_filename = f'colored_mask_{os.path.splitext(filename)[0]}.png'
                     cv2.imwrite(os.path.join(colored_masks_dir, colored_mask_filename), colored_mask)
     except Exception as e:
-        print(e)
-        pass
-       
-
+        print(f"Exception occurred: {e}")
+        import traceback
+        traceback.print_exc()
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
