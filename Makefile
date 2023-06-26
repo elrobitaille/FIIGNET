@@ -1,7 +1,11 @@
 .PHONY: run help clean
 
 resize:
-	python preprocessing/sharpen_image/resize.py $(input_path) $(output_path) $(if $(width),$(width),) $(if $(height),$(height),)
+	if [ "$(padding)" = "" ]; then \
+		python preprocessing/sharpen_image/resize.py $(input_path) $(output_path) --width=$(width) --height=$(height); \
+	else \
+		python preprocessing/sharpen_image/resize.py $(input_path) $(output_path) --width=$(width) --height=$(height) --padding; \
+	fi
 
 inflate:
 	python preprocessing/data_aug/inflate_data.py -i $(input_path) -o $(output_path)
@@ -160,7 +164,7 @@ clean:
 	rm -rf image_data/unprocessed/augmented/*.JPG
 	rm -rf image_data/unprocessed/augmented/*.JPEG
 	rm -rf image_data/unprocessed/augmented/*.PNG
-	
+
 
 	
 	

@@ -17,12 +17,13 @@ def main(model, background):
     square_size = 512
 
     augmented_data_path = "/home/ugrad/serius/edgarrobitaille/FIIGNET/image_data/unprocessed/augmented"
-    gan_output = "~/GAN_output"
-    stable_diffusion_output = "~/SD_output"
+
+    gan_output = "/home/ugrad/serius/edgarrobitaille/FIIGNET/GAN_output"
+    stable_diffusion_output = "/home/ugrad/serius/edgarrobitaille/FIIGNET/SD_output"
 
     commands = [
-        f"make inflate input_path={raw_data_path} output_path={augmented_data_path}",
-        f"make crop input_path={augmented_data_path} output_path={cropped_data_path}"
+       # f"make inflate input_path={raw_data_path} output_path={augmented_data_path}",
+       # f"make crop input_path={augmented_data_path} output_path={cropped_data_path}"
     ]
 
     if not background:
@@ -30,8 +31,8 @@ def main(model, background):
 
     if model == "gan":
         commands.extend([
-            f"make resize input_path={cropped_data_path} output_path={square_resized_path} height={square_size} width={square_size}",
-            f"make enhance input_path={square_resized_path} output_path={gan_output}"
+            f"make resize input_path={cropped_data_path} output_path={square_resized_path} width={square_size} height={square_size} padding=1",
+            f"make enhance input_path={square_resized_path} output_path={gan_output}",
         ])
 
     if model == "stable_diffusion":

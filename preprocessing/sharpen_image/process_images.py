@@ -3,7 +3,7 @@ import os
 import argparse
 import numpy as np
 
-def sharpen_image(img, sigma=1.0, strength=1.5):
+def sharpen_image(img, sigma=0.25, strength=0.25):
     blurred = cv2.GaussianBlur(img, (0, 0), sigma)
     sharpened = cv2.addWeighted(img, 1.0 + strength, blurred, -strength, 0)
     return sharpened
