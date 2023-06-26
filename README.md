@@ -17,7 +17,7 @@ Downloads all Requirements:
 ### To Run the ENTIRE Part 1 Process:
 1. Open `run_all.py` and change corresponding directories to your own (inputs and outputs) 
 2. Run command:
-`python run_all.py --(model_name) --(disease_type)`
+`python run_all.py --(model_name)`
 
 ### Where available model names and disease types are as follows: 
 Model Names:
@@ -29,16 +29,6 @@ Model Names:
 `--cvae`
 4. FIIGNET (Fish Illness Image Generator Network)
 `--fiignet`
-
-Conditions:
-1. Healthy Fish 
-`--healthy`
-2. Ich (White Spot Disease) 
-`--ich`
-3. Red Spot Disease 
-`--red_spot`
-4. Fin Rot 
-`--fin_rot` 
 
 Other Parameters:
 1. If you want input image backgrounds included in final results: 
@@ -99,7 +89,7 @@ To run the command:
 
 ## Running Part 2 of Pipeline (Strong GPU Required)  
 
-### Running NVIDIA StyleGAN3 Repo:   
+## Running NVIDIA StyleGAN3 Repo:   
 Clone NVIDIA's StyleGAN3 Repo:
 
 `git clone https://github.com/NVlabs/stylegan3` 
