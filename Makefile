@@ -36,6 +36,9 @@ yolo:
 segment:
 	python preprocessing/yolo_tracking/examples/segment.py --source $(input_path) --yolo-model $(weights) --img-height $(height) --img-width $(width) --output-dir $(output_path) --save
 
+esrgan:
+	python A-ESRGAN/inference_aesrgan.py --model_path=A-ESRGAN/experiments/pretrained_models/A_ESRGAN_Single.pth --input $(input_dir) --output $(output_dir)
+
 # Target: clean
 # Remove generated files
 
@@ -150,7 +153,7 @@ clean:
 	rm -rf SD_output/*.JPG
 	rm -rf SD_output/*.JPEG
 	rm -rf SD_output/*.PNG
-	
+
 	
 	
 	

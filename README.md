@@ -12,7 +12,7 @@ Cloning the Repo:
 Downloads all Requirements:
 `pip install -r requirements.txt` 
 
-## Running Part 1 of Pipeline (No Strong GPU Required)
+## Running Part 1 of Pipeline (Strong GPU Required)
 
 ### To Run the ENTIRE Part 1 Process:
 1. Open `run_all.py` and change corresponding directories to your own (inputs and outputs) 
@@ -49,22 +49,23 @@ To run the command:
 
 `make resize input_path="path_to_input" output_path="path_to_output" width="?" height="?"`
 
-2. ### Yolo Processing  
-Processes input directory of images and outputs the corresponding YOLO output with red box around fish in a given image or video. Note that height and width are optional arguments if you would like to customize output size, though this may affect YOLO performance greatly. 
+2. ### Facebook's Detectron2 for Image Segmentation
+Using Facebook's Detectron2, images of fish can be detected and easily segmented to create a folder only containing pictures of the fish. Note that the model type and object being tracked may have to tinkered with to work with another (non-fish related) purpose. Note the percent confidence level to create a cropped image can be changed as well. 
 
-To run the command: 
+Cloning the Repo:
 
-`make yolo input_path="path_to_input" weights="path_to_weights" height="?" width="?"`
+`git clone https://github.com/facebookresearch/detectron2`
 
-3. ### Yolo Segmentation  
-Processes yolo image same way as previous command but segments the red YOLO boxes into separate images for each fish in a given image or video. Height and width are optional parameters. 
+Follow the instructions in the repository and be sure to set up a virtual environment if needed. 
+
+If you would like to change parameters or tinker with the cropping, edit `preprocessing/Detectron/detector.py`
 
 To run the command:
 
-`make segment input_path="path_to_input" weights="path_to_weights" height="?" width="?" output_path="path_to_output"`
+`make crop input_path="path_to_input" output_path="path_to_output"`
 
-4. ### Facebook's Segment Anything Segmentation & Masking
-Using Facebook's Segment Anything Segmentation (SAM), each individual item in an image can be segmented. From here, certain algorithms and assumptions can be used to determine what in the object is the fish, and thereby allow the creation of a mask that only contains the fish portion of the image. Note that this is passed through AFTER the YOLO Model. Note that facebook provides checkpoint pth models, this has been mainly tested with the vit_l model. Please check the repository for more information and pip requirements. 
+3. ### Facebook's Segment Anything Segmentation & Masking
+Using Facebook's Segment Anything Segmentation (SAM), each individual item in an image can be segmented. From here, certain algorithms and assumptions can be used to determine what in the object is the fish, and thereby allow the creation of a mask that only contains the fish portion of the image. Note that this is passed through AFTER the Detectron2 Model. Note that facebook provides checkpoint pth models, this has been mainly tested with the vit_l model. Please check the repository for more information and pip requirements. 
 
 Cloning the Repo:
 
