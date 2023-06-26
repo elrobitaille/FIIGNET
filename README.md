@@ -81,7 +81,7 @@ To run the command:
 
 `make mask input_path="path_to_input" checkpoint_path="path_to_checkpoints.pth" output_path="path_to_output"`
 
-5. ### Image Enhancer 
+4. ### Image Enhancer 
 Processes the image to potentially enhance the quality. Uses methods/techniques such as the gaussian filter, unsharpen mask, denoising, Savitsky-Golay filter, to try to improve any low resolution images passed through or previously segmented. 
 
 To run the command:

@@ -2,7 +2,7 @@ import subprocess
 import argparse
 
 def main(model, background):
-    raw_data_path = "/home/ugrad/serius/edgarrobitaille/ICH" 
+    raw_data_path = "/home/ugrad/serius/edgarrobitaille/FINROT" 
     raw_data_enhanced_path = "image_data/processed/raw_image_enhanced" 
     resized_data_path = "image_data/unprocessed/resized" 
     facebook_checkpts = "/home/ugrad/serius/edgarrobitaille/segment-anything/sam_vit_l_0b3195.pth"
@@ -16,26 +16,30 @@ def main(model, background):
     resize_width = 512
     square_size = 512
 
-    gan_output = "/GAN_output"
-    stable_diffusion_output = "/SD_output"
+    augmented_data_path = "/home/ugrad/serius/edgarrobitaille/FIIGNET/image_data/unprocessed/augmented"
+    gan_output = "~/GAN_output"
+    stable_diffusion_output = "~/SD_output"
 
     commands = [
-        f"make resize input_path={raw_data_path} output_path={resized_data_path} height={resize_height} width={resize_width}",
-        f"make crop input_path={resized_data_path} output_path={cropped_data_path}"
+        f"make inflate input_path={raw_data_path} output_path={augmented_data_path}",
+        f"make crop input_path={augmented_data_path} output_path={cropped_data_path}"
     ]
 
     if not background:
         commands.append(f"make mask input_path={cropped_data_path} checkpoint_path={facebook_checkpts} output_path={facebook_mask_output}")
 
     if model == "gan":
-        commands.append(f"make resize input_path={cropped_data_path} output_path={square_resized_path} height={square_size} width={square_size}")
-        commands.append(f"make enhance input_path={square_resized_path} output_path={gan_output}")
+        commands.extend([
+            f"make resize input_path={cropped_data_path} output_path={square_resized_path} height={square_size} width={square_size}",
+            f"make enhance input_path={square_resized_path} output_path={gan_output}"
+        ])
 
     if model == "stable_diffusion":
         if background:
             commands.append(f"make enhance input_path={cropped_data_path} output_path={stable_diffusion_output}")
         else:
             commands.append(f"make enhance input_path={facebook_color_output} output_path={stable_diffusion_output}")
+
 
     for command in commands:
         process = subprocess.Popen(command, shell=True)

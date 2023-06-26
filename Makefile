@@ -4,7 +4,7 @@ resize:
 	python preprocessing/sharpen_image/resize.py $(input_path) $(output_path) $(if $(width),$(width),) $(if $(height),$(height),)
 
 inflate:
-	python preprocessing/data_aug/inflate_data.py -d $(input_path) -b $(brightness) -r $(angle)
+	python preprocessing/data_aug/inflate_data.py -i $(input_path) -o $(output_path)
 
 crop:
 	python preprocessing/Detectron/detector.py --input_path $(input_path) --output_path $(output_path)
@@ -153,6 +153,14 @@ clean:
 	rm -rf SD_output/*.JPG
 	rm -rf SD_output/*.JPEG
 	rm -rf SD_output/*.PNG
+
+	rm -rf image_data/unprocessed/augmented/*.jpg
+	rm -rf image_data/unprocessed/augmented/*.jpeg
+	rm -rf image_data/unprocessed/augmented/*.png
+	rm -rf image_data/unprocessed/augmented/*.JPG
+	rm -rf image_data/unprocessed/augmented/*.JPEG
+	rm -rf image_data/unprocessed/augmented/*.PNG
+	
 
 	
 	
