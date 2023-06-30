@@ -165,6 +165,14 @@ clean:
 	rm -rf image_data/unprocessed/augmented/*.JPEG
 	rm -rf image_data/unprocessed/augmented/*.PNG
 
+	rm -rf GAN_output/*.jpg
+	rm -rf GAN_output/*.jpeg
+	rm -rf GAN_output/*.png
+	rm -rf GAN_output/*.JPG
+	rm -rf GAN_output/*.JPEG
+	rm -rf GAN_output/*.PNG
+	
+
 
 	
 	

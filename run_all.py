@@ -2,7 +2,7 @@ import subprocess
 import argparse
 
 def main(model, background):
-    raw_data_path = "/home/ugrad/serius/edgarrobitaille/FINROT" 
+    raw_data_path = "/home/ugrad/serius/edgarrobitaille/invokeai/outputs/ich_fakes" 
     raw_data_enhanced_path = "image_data/processed/raw_image_enhanced" 
     resized_data_path = "image_data/unprocessed/resized" 
     facebook_checkpts = "/home/ugrad/serius/edgarrobitaille/segment-anything/sam_vit_l_0b3195.pth"
@@ -12,9 +12,9 @@ def main(model, background):
     square_resized_path = "image_data/processed/square_resize"
     colored_mask_path = "preprocessing/mask_image/colored_masks"
 
-    resize_height = 512
-    resize_width = 512
-    square_size = 512
+    resize_height = 256
+    resize_width = 256
+    square_size = 256
 
     augmented_data_path = "/home/ugrad/serius/edgarrobitaille/FIIGNET/image_data/unprocessed/augmented"
 
@@ -23,7 +23,7 @@ def main(model, background):
 
     commands = [
        # f"make inflate input_path={raw_data_path} output_path={augmented_data_path}",
-       # f"make crop input_path={augmented_data_path} output_path={cropped_data_path}"
+       f"make crop input_path={raw_data_path} output_path={cropped_data_path}"
     ]
 
     if not background:
