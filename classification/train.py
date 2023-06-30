@@ -8,7 +8,7 @@ import argparse
 def main(args):
     path = args.input_path
 
-    data = ImageDataLoaders.from_folder(path, train='train', valid_pct=0.2,
+    data = ImageDataLoaders.from_folder(path, train='train', valid='validate',
                                     item_tfms=Resize(460),
                                     batch_tfms=[*aug_transforms(size=224, min_scale=0.75), 
                                                 Normalize.from_stats(*imagenet_stats),
@@ -35,6 +35,10 @@ def main(args):
     interp.plot_confusion_matrix()
 
     learn.export(args.output_path)
+
+    test_path = os.path.join(path, 'test')
+    test_dl = data.test_dl(get_image_files(test_path))
+    learn.validate(dl=test_dl)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Train a CNN for image classification.')
