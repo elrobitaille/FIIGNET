@@ -2,6 +2,7 @@ from fastai.vision.all import *
 from fastai.vision.augment import FlipItem
 import os
 import argparse
+import matplotlib.pyplot as plt
 
 # python train.py --input_path '/path/to/image/directory' --output_path '/path/to/learner.pkl'
 
@@ -9,11 +10,10 @@ def main(args):
     path = args.input_path
 
     data = ImageDataLoaders.from_folder(path, train='train', valid='validate',
-                                    item_tfms=Resize(460),
-                                    batch_tfms=[*aug_transforms(size=224, min_scale=0.75), 
-                                                Normalize.from_stats(*imagenet_stats),
-                                                FlipItem(p=0.5)])
-
+                                        item_tfms=Resize(460),
+                                        batch_tfms=[*aug_transforms(size=224, min_scale=0.75), 
+                                                    Normalize.from_stats(*imagenet_stats),
+                                                    FlipItem(p=0.5)])
 
     learn = cnn_learner(data, resnet152, metrics=accuracy, wd=0.1)
 
@@ -38,7 +38,13 @@ def main(args):
 
     test_path = os.path.join(path, 'test')
     test_dl = data.test_dl(get_image_files(test_path))
-    learn.validate(dl=test_dl)
+
+    result = learn.validate(dl=test_dl)
+   # print("Result: ", result)
+
+    # Plot the losses and save the figure
+    learn.recorder.plot_loss()
+    plt.savefig(os.path.join(path, 'loss_plot.png'))
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Train a CNN for image classification.')
