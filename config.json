@@ -1,0 +1,9 @@
+{
+    "base_path": "/home/ugrad/serius/edgarrobitaille/FIIGNET",
+    "segment_anything_path": "/home/ugrad/serius/edgarrobitaille/segment-anything",
+    "resize": {
+        "height": 256,
+        "width": 256
+    },
+    "square_size": 256
+}
