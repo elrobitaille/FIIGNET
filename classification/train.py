@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 def main(args):
     path = args.input_path
 
-    data = ImageDataLoaders.from_folder(path, train='train', valid='validate',
+    data =   ImageDataLoaders.from_folder(path, train='train', valid='validate',
                                         item_tfms=Resize(460),
                                         batch_tfms=[*aug_transforms(size=224, min_scale=0.75), 
                                                     Normalize.from_stats(*imagenet_stats),
@@ -29,7 +29,7 @@ def main(args):
 
     learn.unfreeze()
     
-    learn.fit_one_cycle(100, slice(lr/100, lr))
+    learn.fit_one_cycle(50, slice(lr/100, lr))
 
     interp = ClassificationInterpretation.from_learner(learn)
     interp.plot_confusion_matrix()
